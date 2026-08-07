@@ -409,12 +409,25 @@ export const faqs = [
   },
 ]
 
+/**
+ * El `value` viaja al flujo de n8n y el `label` se muestra al usuario.
+ * Se envían códigos y no textos para que la puntuación del lead no dependa de
+ * cómo esté escrita una etiqueta con tildes o símbolos de moneda.
+ */
 export const serviceOptions = [
-  'Diseño de página web',
-  'Landing page',
-  'Tienda online',
-  'Automatización con IA',
-  'Chatbot / WhatsApp',
-  'Optimización de sitio existente',
-  'Otro / no estoy seguro',
+  { value: 'web', label: 'Diseño de página web' },
+  { value: 'landing', label: 'Landing page' },
+  { value: 'tienda', label: 'Tienda online' },
+  { value: 'automatizacion', label: 'Automatización con IA' },
+  { value: 'chatbot', label: 'Chatbot / WhatsApp' },
+  { value: 'optimizacion', label: 'Optimización de sitio existente' },
+  { value: 'otro', label: 'Otro / no estoy seguro' },
+]
+
+export const budgetOptions = [
+  { value: 'lt1k', label: 'Menos de 1.000 €' },
+  { value: '1k-3k', label: '1.000 € - 3.000 €' },
+  { value: '3k-7k', label: '3.000 € - 7.000 €' },
+  { value: 'gt7k', label: 'Más de 7.000 €' },
+  { value: 'unknown', label: 'Aún no lo tengo definido' },
 ]

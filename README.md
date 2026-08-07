@@ -108,7 +108,7 @@ El sitio no contiene ningún dato inventado: no hay testimonios, ni clientes, ni
 - [ ] **Marca**: `brand.name` y `brand.suffix` en [`site.js`](src/data/site.js). Actualizar también `package.json` y los metadatos de [`index.html`](index.html).
 - [ ] **Contacto**: `brand.email`, `brand.phone` y `brand.whatsapp`. Están marcados con `TODO`. Publicar con un WhatsApp que no existe significa perder todos los contactos que llegue a generar el sitio.
 - [ ] **Equipo**: nombres, roles y LinkedIn de los tres, en `team`. Añadir fotos reales mejora la conversión más que cualquier otro cambio de esta lista.
-- [ ] **Formulario**: conectar `FORM_ENDPOINT` en [`ContactForm.jsx`](src/components/ContactForm.jsx) a un webhook. Sin eso solo abre WhatsApp y no queda registro.
+- [ ] **Formulario**: montar el flujo de [`automations/captacion-leads/`](automations/captacion-leads/README.md) y poner su URL en `VITE_FORM_ENDPOINT`. Sin eso solo abre WhatsApp y no queda registro.
 - [ ] **Precios de la FAQ**: revisar plazos y política de soporte; ahora mismo son valores propuestos, no acordados.
 - [ ] **SEO**: URL canónica, Open Graph y el JSON-LD de `index.html` (lleva datos de ejemplo a propósito). Añadir una imagen `og:image` de 1200×630.
 - [ ] **Legal**: los enlaces del pie apuntan a `#contacto` como marcador. Crear aviso legal, privacidad y cookies.
@@ -133,15 +133,17 @@ En el bloque `@theme` de [`src/index.css`](src/index.css). Cambiar `--color-neon
 
 ### Formulario de contacto
 
-Por defecto **no hay backend**: al enviar se abre WhatsApp con la solicitud ya redactada, y en la pantalla de confirmación se ofrece también el envío por correo.
+El formulario envía a un webhook configurado por variable de entorno. Copia `.env.example` a `.env` y pon la URL:
 
-Para conectar un backend real (webhook de n8n, Formspree, API propia), basta con rellenar la constante al inicio de [`src/components/ContactForm.jsx`](src/components/ContactForm.jsx):
-
-```js
-const FORM_ENDPOINT = 'https://tu-webhook.example.com/leads'
+```
+VITE_FORM_ENDPOINT=https://tu-n8n.com/webhook/captacion-leads
 ```
 
-A partir de ahí el formulario hace `POST` con el JSON de los campos y muestra el mensaje de confirmación estándar.
+El flujo que recibe esas solicitudes está en [`automations/captacion-leads/`](automations/captacion-leads/README.md): filtra bots, puntúa cada lead, lo clasifica en A/B/C/D, lo guarda en Google Sheets, avisa al equipo por Telegram y manda la autorespuesta.
+
+Si la variable se deja vacía, el formulario abre WhatsApp con la solicitud ya redactada — funciona, pero **no queda registro de nada**.
+
+El envío incluye un campo trampa oculto y el tiempo transcurrido desde que se abrió el formulario; ambos los usa n8n para descartar bots.
 
 ## SEO
 

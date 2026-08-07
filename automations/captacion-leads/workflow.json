@@ -1,0 +1,349 @@
+{
+  "name": "Captación y calificación de leads",
+  "nodes": [
+    {
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Formulario web (POST)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -660,
+        300
+      ],
+      "webhookId": "c9f1a2b3-4d5e-4f60-9a71-000000000001",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "captacion-leads",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Normalizar y validar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Limpia lo que llega del formulario y descarta bots y envíos incompletos.\n// Nada sale de aquí sin pasar por este filtro.\n\nconst FREE_MAIL = [\n  'gmail.com', 'hotmail.com', 'outlook.com', 'outlook.es', 'yahoo.com',\n  'yahoo.es', 'live.com', 'icloud.com', 'aol.com', 'protonmail.com',\n  'proton.me', 'gmx.com', 'mail.com', 'yandex.com', 'zoho.com',\n];\n\nconst clean = (value) => String(value ?? '').trim();\nconst isEmail = (value) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(value);\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  // El webhook v2 mete el cuerpo en `body`; se acepta también plano.\n  const src = item.json.body ?? item.json;\n\n  const name = clean(src.name);\n  const email = clean(src.email).toLowerCase();\n  const phone = clean(src.phone);\n  const company = clean(src.company);\n  const message = clean(src.message);\n  const service = clean(src.service) || 'otro';\n  const budget = clean(src.budget) || 'unknown';\n  const serviceLabel = clean(src.serviceLabel) || service;\n  const budgetLabel = clean(src.budgetLabel) || budget;\n  const honeypot = clean(src.website);\n  const elapsedMs = Number(src.elapsedMs ?? 0);\n\n  const problems = [];\n\n  // Trampa para bots: el campo está oculto, una persona no puede rellenarlo.\n  if (honeypot) problems.push('honeypot');\n\n  // Un humano no completa el formulario en menos de tres segundos.\n  if (elapsedMs > 0 && elapsedMs < 3000) problems.push('demasiado rapido');\n\n  if (name.length < 2) problems.push('nombre');\n  if (!isEmail(email)) problems.push('email');\n  if (message.length < 10) problems.push('mensaje');\n\n  // Spam habitual: mensajes plagados de enlaces u ofertas de SEO.\n  const links = (message.match(/https?:\\/\\//g) || []).length;\n  if (links >= 3) problems.push('exceso de enlaces');\n  if (/(seo services|backlinks|criptomoned|bitcoin|casino|viagra)/i.test(message)) {\n    problems.push('contenido sospechoso');\n  }\n\n  const domain = email.split('@')[1] || '';\n\n  results.push({\n    json: {\n      valid: problems.length === 0,\n      problems,\n      name,\n      firstName: name.split(' ')[0] || name,\n      email,\n      domain,\n      corporateEmail: Boolean(domain) && !FREE_MAIL.includes(domain),\n      phone,\n      company,\n      service,\n      serviceLabel,\n      budget,\n      budgetLabel,\n      message,\n      page: clean(src.page),\n      source: clean(src.source) || 'web',\n      receivedAt: new Date().toISOString(),\n    },\n  });\n}\n\nreturn results;"
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "¿Datos válidos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -220,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Calificar y clasificar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        40,
+        180
+      ],
+      "parameters": {
+        "jsCode": "// Puntúa el lead con reglas explícitas. Sin IA a propósito: es gratis,\n// instantáneo y siempre puedes explicar por qué un lead sacó la nota que sacó.\n// Los pesos están arriba para que los ajustes con los datos reales.\n\nconst PESOS = {\n  presupuesto: { gt7k: 35, '3k-7k': 28, '1k-3k': 20, lt1k: 6, unknown: 12 },\n  servicio: {\n    automatizacion: 12,\n    chatbot: 12,\n    tienda: 10,\n    web: 7,\n    landing: 7,\n    optimizacion: 6,\n    otro: 2,\n  },\n  telefono: 12,\n  empresa: 8,\n  emailCorporativo: 10,\n  mensajeLargo: 12,\n  mensajeMedio: 8,\n  mensajeCorto: 4,\n  urgencia: 8,\n  descalificador: -25,\n};\n\n// Umbrales de clasificación. Calibrados para que un autónomo con correo de\n// Gmail y presupuesto de 1.000-3.000 € siga siendo un lead B: la mayoría de\n// los negocios locales no tienen dominio propio y son clientes perfectamente\n// buenos. Súbelos el día que te sobren leads.\nconst UMBRALES = { A: 65, B: 40, C: 22 };\n\nconst URGENCIA = /(urgente|cuanto antes|lo antes posible|esta semana|para ya|inmediato|ya tengo|presupuesto aprobado|necesito para)/i;\nconst DESCARTE = /(gratis|sin coste|sin presupuesto|practicas|prácticas|estudiante|intercambio|colaboraci[oó]n|a cambio de visibilidad|porcentaje de las ventas)/i;\n\nconst esc = (texto) =>\n  String(texto ?? '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const lead = item.json;\n  let score = 0;\n  const reasons = [];\n\n  const addPoints = (points, why) => {\n    if (!points) return;\n    score += points;\n    reasons.push((points > 0 ? '+' : '') + points + ' ' + why);\n  };\n\n  addPoints(PESOS.presupuesto[lead.budget] ?? PESOS.presupuesto.unknown, 'presupuesto: ' + lead.budgetLabel);\n  addPoints(PESOS.servicio[lead.service] ?? PESOS.servicio.otro, 'servicio: ' + lead.serviceLabel);\n\n  if (lead.phone) addPoints(PESOS.telefono, 'dejó teléfono');\n  if (lead.company) addPoints(PESOS.empresa, 'indicó empresa');\n  if (lead.corporateEmail) addPoints(PESOS.emailCorporativo, 'email corporativo (' + lead.domain + ')');\n\n  const largo = lead.message.length;\n  if (largo >= 250) addPoints(PESOS.mensajeLargo, 'mensaje detallado');\n  else if (largo >= 100) addPoints(PESOS.mensajeMedio, 'mensaje con contexto');\n  else addPoints(PESOS.mensajeCorto, 'mensaje breve');\n\n  if (URGENCIA.test(lead.message)) addPoints(PESOS.urgencia, 'señales de urgencia');\n  if (DESCARTE.test(lead.message)) addPoints(PESOS.descalificador, 'pide trabajo sin pagar');\n\n  score = Math.max(0, Math.min(100, score));\n\n  let tier, tierLabel, emoji, action, slaHours;\n  if (score >= UMBRALES.A) {\n    tier = 'A'; tierLabel = 'CALIENTE'; emoji = '🔥';\n    action = 'Llamar hoy. Si no contesta, WhatsApp y segundo intento mañana.';\n    slaHours = 2;\n  } else if (score >= UMBRALES.B) {\n    tier = 'B'; tierLabel = 'TEMPLADO'; emoji = '🟡';\n    action = 'Enviar propuesta con precio cerrado en menos de 24 h.';\n    slaHours = 24;\n  } else if (score >= UMBRALES.C) {\n    tier = 'C'; tierLabel = 'FRÍO'; emoji = '🔵';\n    action = 'Responder con preguntas para concretar alcance y presupuesto.';\n    slaHours = 48;\n  } else {\n    tier = 'D'; tierLabel = 'REVISAR'; emoji = '⚪';\n    action = 'Revisar a mano antes de invertir tiempo.';\n    slaHours = 72;\n  }\n\n  const fecha = new Date();\n  const sello = fecha.toISOString().slice(0, 10).replace(/-/g, '');\n  const leadId = 'LD-' + sello + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();\n  const dueAt = new Date(fecha.getTime() + slaHours * 3600 * 1000).toISOString();\n\n  const lineas = [\n    emoji + ' <b>LEAD ' + tier + ' · ' + tierLabel + '</b>  —  ' + score + '/100',\n    '',\n    '<b>' + esc(lead.name) + '</b>' + (lead.company ? ' · ' + esc(lead.company) : ''),\n    '✉️ ' + esc(lead.email),\n    lead.phone ? '📞 ' + esc(lead.phone) : '📞 no dejó teléfono',\n    '',\n    '<b>Quiere:</b> ' + esc(lead.serviceLabel),\n    '<b>Presupuesto:</b> ' + esc(lead.budgetLabel),\n    '',\n    '<b>Mensaje</b>',\n    '<i>' + esc(lead.message.slice(0, 600)) + '</i>',\n    '',\n    '<b>Por qué esta nota</b>',\n    reasons.map((r) => '· ' + esc(r)).join('\\n'),\n    '',\n    '👉 <b>' + esc(action) + '</b>',\n    'Responder antes de: ' + dueAt.slice(0, 16).replace('T', ' ') + ' UTC',\n    '',\n    '<code>' + leadId + '</code>',\n  ];\n\n  const notifyText = lineas.join('\\n');\n\n  results.push({\n    json: {\n      ...lead,\n      leadId,\n      score,\n      tier,\n      tierLabel,\n      action,\n      slaHours,\n      dueAt,\n      reasons,\n      reasonsText: reasons.join(' | '),\n      notifyText,\n      // Misma información sin etiquetas HTML, para WhatsApp o SMS.\n      notifyPlain: notifyText.replace(/<[^>]+>/g, ''),\n      autoReplySubject: 'Recibimos tu solicitud (' + leadId + ')',\n      autoReplyBody: [\n        'Hola ' + lead.firstName + ',',\n        '',\n        'Gracias por escribirnos. Ya tenemos tu solicitud y la estamos revisando.',\n        '',\n        'Nos has pedido: ' + lead.serviceLabel,\n        '',\n        'Te respondemos en menos de 24 horas laborables con dos cosas: una propuesta de cómo lo abordaríamos y un precio cerrado, sin sorpresas. Si mientras tanto quieres adelantarnos algo, responde a este mismo correo.',\n        '',\n        'Referencia de tu solicitud: ' + leadId,\n        '',\n        'Un saludo,',\n        'El equipo',\n      ].join('\\n'),\n    },\n  });\n}\n\nreturn results;"
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "Responder al sitio web",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        -60
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, leadId: $json.leadId, message: \"Solicitud recibida\" }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "name": "Rechazar envío",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        40,
+        460
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: \"Revisa los datos del formulario\" }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000007",
+      "name": "Fila para la hoja",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        100
+      ],
+      "parameters": {
+        "jsCode": "// Deja solo las columnas de la hoja. Sin esto, Google Sheets crearía una\n// columna por cada campo interno del flujo.\n\nreturn $input.all().map((item) => ({\n  json: {\n    ID: item.json.leadId,\n    Fecha: item.json.receivedAt,\n    Nombre: item.json.name,\n    Email: item.json.email,\n    Telefono: item.json.phone,\n    Empresa: item.json.company,\n    Servicio: item.json.serviceLabel,\n    Presupuesto: item.json.budgetLabel,\n    Mensaje: item.json.message,\n    Score: item.json.score,\n    Clasificacion: item.json.tier,\n    Estado: 'Nuevo',\n    Accion: item.json.action,\n    ResponderAntesDe: item.json.dueAt,\n    Motivos: item.json.reasonsText,\n    Origen: item.json.source,\n    Pagina: item.json.page,\n  },\n}));"
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000008",
+      "name": "Guardar en Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        540,
+        100
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PEGA_AQUI_EL_ID_DE_TU_HOJA",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000009",
+      "name": "Avisar al equipo (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        280
+      ],
+      "parameters": {
+        "chatId": "PEGA_AQUI_TU_CHAT_ID",
+        "text": "={{ $json.notifyText }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000010",
+      "name": "Avisar al equipo (WhatsApp)",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        300,
+        440
+      ],
+      "disabled": true,
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "PEGA_AQUI_EL_PHONE_NUMBER_ID",
+        "recipientPhoneNumber": "PEGA_AQUI_TU_NUMERO",
+        "textBody": "={{ $json.notifyPlain }}",
+        "additionalFields": {}
+      }
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000011",
+      "name": "Autorespuesta al cliente",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        620
+      ],
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.autoReplySubject }}",
+        "emailType": "text",
+        "message": "={{ $json.autoReplyBody }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "b2000000-0000-4000-8000-000000000001",
+      "name": "Nota · Entrada",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        40
+      ],
+      "parameters": {
+        "color": 4,
+        "width": 480,
+        "height": 200,
+        "content": "## 1 · Entrada y filtro\n\nEl formulario de la web hace **POST** a este webhook.\n\nCopia la **Production URL** del nodo y pégala en `VITE_FORM_ENDPOINT` (archivo `.env` del sitio).\n\nEl nodo *Normalizar* descarta bots (campo trampa + envíos en menos de 3 s) y datos incompletos antes de gastar una sola llamada a otro servicio."
+      }
+    },
+    {
+      "id": "b2000000-0000-4000-8000-000000000002",
+      "name": "Nota · Calificación",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -140
+      ],
+      "parameters": {
+        "color": 5,
+        "width": 240,
+        "height": 280,
+        "content": "## 2 · Calificación\n\nPuntúa de 0 a 100 con reglas visibles y clasifica en A / B / C / D.\n\nLos pesos y los umbrales están al principio del código: ajústalos cuando tengas 20 o 30 leads reales y sepas cuáles cerraron."
+      }
+    },
+    {
+      "id": "b2000000-0000-4000-8000-000000000003",
+      "name": "Nota · Salidas",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        240
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 400,
+        "height": 340,
+        "content": "## 3 · Salidas\n\n**Responder al sitio** va primero para que el formulario no espere a Sheets ni a Gmail.\n\n**Telegram** es el aviso inmediato: gratis y listo en dos minutos.\n\n**WhatsApp** viene desactivado. Actívalo cuando Meta apruebe tu número; es el mismo mensaje sin HTML.\n\n**Autorespuesta**: la misma para todos. No cambies el tono según la nota: un lead con poca puntuación no es un mal cliente, solo un lead con menos datos."
+      }
+    }
+  ],
+  "connections": {
+    "Formulario web (POST)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar y validar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar y validar": {
+      "main": [
+        [
+          {
+            "node": "¿Datos válidos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Datos válidos?": {
+      "main": [
+        [
+          {
+            "node": "Calificar y clasificar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rechazar envío",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calificar y clasificar": {
+      "main": [
+        [
+          {
+            "node": "Responder al sitio web",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fila para la hoja",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Avisar al equipo (Telegram)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Avisar al equipo (WhatsApp)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Autorespuesta al cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fila para la hoja": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "plantilla-captacion-leads"
+  },
+  "tags": []
+}

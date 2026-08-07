@@ -1,34 +1,32 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertCircle, CheckCircle2, Loader2, Mail, Send } from 'lucide-react'
-import { brand, serviceOptions } from '../data/site'
+import { brand, budgetOptions, serviceOptions } from '../data/site'
 import Button from './ui/Button'
 
 /**
- * Endpoint del formulario.
- * Déjalo vacío para trabajar sin backend: la solicitud se entrega por WhatsApp
- * con el mensaje ya redactado. Para conectar un backend real (webhook de n8n,
- * Formspree, una API propia…), pon aquí la URL y el envío pasará a hacerse por POST.
+ * Webhook que recibe las solicitudes.
+ * Se configura en el archivo `.env` con la URL de producción del flujo de n8n
+ * (ver `automations/captacion-leads/`). Si no está definido, el formulario
+ * recurre a WhatsApp con el mensaje ya redactado, pero entonces no queda
+ * registro de la solicitud en ningún sitio.
  */
-const FORM_ENDPOINT = ''
+const FORM_ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT ?? ''
 
-const budgets = [
-  'Menos de 1.000 €',
-  '1.000 € - 3.000 €',
-  '3.000 € - 7.000 €',
-  'Más de 7.000 €',
-  'Aún no lo tengo definido',
-]
+const labelOf = (options, value) =>
+  options.find((option) => option.value === value)?.label ?? value
 
 const emptyForm = {
   name: '',
   email: '',
   phone: '',
   company: '',
-  service: serviceOptions[0],
-  budget: budgets[4],
+  service: serviceOptions[0].value,
+  budget: 'unknown',
   message: '',
   consent: false,
+  // Campo trampa: está oculto, así que solo lo rellenan los bots.
+  website: '',
 }
 
 const fieldClass =
@@ -44,8 +42,8 @@ function buildMessage(data) {
     `Email: ${data.email}`,
     data.phone && `Teléfono: ${data.phone}`,
     data.company && `Empresa: ${data.company}`,
-    `Servicio: ${data.service}`,
-    `Presupuesto: ${data.budget}`,
+    `Servicio: ${labelOf(serviceOptions, data.service)}`,
+    `Presupuesto: ${labelOf(budgetOptions, data.budget)}`,
     '',
     `Proyecto: ${data.message}`,
   ]
@@ -57,6 +55,9 @@ export default function ContactForm() {
   const [form, setForm] = useState(emptyForm)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | sending | sent | error
+
+  // Un bot rellena y envía en menos de un segundo; una persona no.
+  const openedAt = useRef(Date.now())
 
   const update = (field) => (event) => {
     const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value
@@ -86,7 +87,15 @@ export default function ContactForm() {
         const response = await fetch(FORM_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form),
+          body: JSON.stringify({
+            ...form,
+            // Etiquetas legibles, para no tener que traducir códigos en n8n.
+            serviceLabel: labelOf(serviceOptions, form.service),
+            budgetLabel: labelOf(budgetOptions, form.budget),
+            source: 'web',
+            page: window.location.href,
+            elapsedMs: Date.now() - openedAt.current,
+          }),
         })
         if (!response.ok) throw new Error('Respuesta no válida del servidor')
       } else {
@@ -239,8 +248,8 @@ export default function ContactForm() {
                   className={`${fieldClass} appearance-none`}
                 >
                   {serviceOptions.map((option) => (
-                    <option key={option} value={option} className="bg-ink-800">
-                      {option}
+                    <option key={option.value} value={option.value} className="bg-ink-800">
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -257,9 +266,9 @@ export default function ContactForm() {
                   onChange={update('budget')}
                   className={`${fieldClass} appearance-none`}
                 >
-                  {budgets.map((option) => (
-                    <option key={option} value={option} className="bg-ink-800">
-                      {option}
+                  {budgetOptions.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-ink-800">
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -281,6 +290,21 @@ export default function ContactForm() {
                 className={`${fieldClass} resize-none ${errors.message ? 'border-red-400/60' : ''}`}
               />
               {errors.message && <FieldError text={errors.message} />}
+            </div>
+
+            {/* Campo trampa. Invisible y fuera del recorrido de teclado y lectores
+                de pantalla: si llega relleno, el envío es de un bot. */}
+            <div aria-hidden className="pointer-events-none absolute -left-[9999px] opacity-0">
+              <label htmlFor="website">No rellenar</label>
+              <input
+                id="website"
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={form.website}
+                onChange={update('website')}
+              />
             </div>
 
             <div>
