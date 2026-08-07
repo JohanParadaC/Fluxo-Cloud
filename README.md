@@ -45,19 +45,19 @@ src/
 ├── views/                      Una vista por entrada del menú
 │   ├── Home.jsx                Portada + Servicios + Proceso
 │   ├── AutomationView.jsx      Automatización con IA + Beneficios
-│   └── Work.jsx                Portafolio + Testimonios
+│   └── Work.jsx                Demos + Equipo
 └── components/
     ├── Navbar.jsx              Menú fijo, vista activa, barra de progreso
     ├── Hero.jsx                Titular, CTAs y métricas de confianza
     ├── HeroVisual.jsx          Panel de control futurista animado
     ├── Services.jsx            4 bloques de servicios
     ├── Process.jsx             5 pasos del proceso de trabajo
-    ├── Portfolio.jsx           Showcase con filtros por categoría
+    ├── Demos.jsx               Demos propias, con filtros por categoría
+    ├── Team.jsx                Los tres fundadores
     ├── ProjectMockup.jsx       6 mockups de interfaz en CSS puro
     ├── Automation.jsx          Sección de IA y automatización
     ├── AutomationFlow.jsx      Diagrama de flujo (entradas → motor → salidas)
     ├── Benefits.jsx            "¿Por qué elegirnos?"
-    ├── Testimonials.jsx        Testimonios + marquesina de clientes
     ├── Faq.jsx                 Acordeón accesible
     ├── Contact.jsx             CTA final, canales directos y formulario
     ├── ContactForm.jsx         Formulario con validación
@@ -77,7 +77,7 @@ Son **cinco vistas**, y cada una agrupa las secciones que cuentan una misma hist
 | ---------------- | ------------------ | ----------------------------------- |
 | Inicio           | `#inicio`          | Portada · Servicios · Proceso       |
 | Automatización   | `#automatizacion`  | Automatización con IA · Beneficios  |
-| Portafolio       | `#portafolio`      | Proyectos · Testimonios             |
+| Demos            | `#demos`           | Demos · Equipo                      |
 | FAQ              | `#faq`             | Preguntas frecuentes                |
 | Contacto         | `#contacto`        | Contacto y formulario               |
 
@@ -100,6 +100,20 @@ La primera versión consumía alrededor de un 26 % de CPU de forma continua. Los
 6. **Barra de progreso sin muelle.** `useSpring` dejaba un bucle de animación abierto tras cada scroll; el valor directo de `useScroll` no.
 
 Si aun así quieres bajar más el consumo, lo siguiente sería quitar el lienzo del hero ([`NeuralCanvas`](src/components/ui/NeuralCanvas.jsx)) — es la única animación que ejecuta JavaScript de forma continua.
+
+## Antes de publicar
+
+El sitio no contiene ningún dato inventado: no hay testimonios, ni clientes, ni métricas de resultados que no se puedan demostrar. Lo que queda pendiente son datos reales que solo vosotros tenéis.
+
+- [ ] **Marca**: `brand.name` y `brand.suffix` en [`site.js`](src/data/site.js). Actualizar también `package.json` y los metadatos de [`index.html`](index.html).
+- [ ] **Contacto**: `brand.email`, `brand.phone` y `brand.whatsapp`. Están marcados con `TODO`. Publicar con un WhatsApp que no existe significa perder todos los contactos que llegue a generar el sitio.
+- [ ] **Equipo**: nombres, roles y LinkedIn de los tres, en `team`. Añadir fotos reales mejora la conversión más que cualquier otro cambio de esta lista.
+- [ ] **Formulario**: conectar `FORM_ENDPOINT` en [`ContactForm.jsx`](src/components/ContactForm.jsx) a un webhook. Sin eso solo abre WhatsApp y no queda registro.
+- [ ] **Precios de la FAQ**: revisar plazos y política de soporte; ahora mismo son valores propuestos, no acordados.
+- [ ] **SEO**: URL canónica, Open Graph y el JSON-LD de `index.html` (lleva datos de ejemplo a propósito). Añadir una imagen `og:image` de 1200×630.
+- [ ] **Legal**: los enlaces del pie apuntan a `#contacto` como marcador. Crear aviso legal, privacidad y cookies.
+
+Cuando entreguéis los primeros proyectos, la sección de demos se sustituye por casos reales: `demos` pasa a llevar resultados medidos, y conviene recuperar una sección de testimonios con citas de clientes que hayan dado permiso.
 
 ## Personalización
 

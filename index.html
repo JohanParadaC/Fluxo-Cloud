@@ -52,23 +52,24 @@
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2304060c'/%3E%3Cpath d='M20 46V18l24 28V18' stroke='%2322d3ee' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E"
     />
 
-    <!-- Datos estructurados -->
+    <!--
+      Datos estructurados.
+      TODO antes de publicar: sustituir nombre, URL, correo, teléfono y perfiles
+      por los reales. Un JSON-LD con datos inventados es peor que no ponerlo:
+      Google lo cruza con el resto de la web y penaliza las incoherencias.
+    -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "ProfessionalService",
         "name": "Nexora Solutions",
-        "description": "Agencia digital especializada en diseño web, soluciones digitales y automatización de procesos con inteligencia artificial.",
-        "url": "https://nexorasolutions.com/",
-        "email": "hola@nexorasolutions.com",
-        "telephone": "+34600123456",
-        "areaServed": "Global",
+        "description": "Estudio de desarrollo web y automatización de procesos con inteligencia artificial.",
+        "url": "https://ejemplo.com/",
+        "email": "hola@ejemplo.com",
+        "telephone": "+00000000000",
+        "areaServed": ["ES", "LATAM"],
         "priceRange": "$$",
-        "sameAs": [
-          "https://www.linkedin.com/",
-          "https://www.instagram.com/",
-          "https://github.com/"
-        ]
+        "sameAs": ["https://www.linkedin.com/"]
       }
     </script>
   </head>

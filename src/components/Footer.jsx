@@ -1,5 +1,5 @@
 import { ArrowUp, Clock, Mail, MapPin, MessageCircle, Phone, Zap } from 'lucide-react'
-import { brand, legalLinks, sectors, services } from '../data/site'
+import { brand, legalLinks, services, workPrinciples } from '../data/site'
 import { getIcon } from '../lib/icons'
 
 /** Logo de X: lucide todavía expone el pájaro antiguo de Twitter. */
@@ -96,13 +96,14 @@ export default function Footer() {
             </ul>
           </nav>
 
-          {/* Sectores */}
+          {/* Cómo trabajamos */}
           <div>
-            <h3 className="font-display text-sm font-semibold text-mist-100">Sectores</h3>
+            <h3 className="font-display text-sm font-semibold text-mist-100">Cómo trabajamos</h3>
             <ul className="mt-5 flex flex-col gap-3">
-              {sectors.map((sector) => (
-                <li key={sector} className="text-sm text-mist-300/75">
-                  {sector}
+              {workPrinciples.map((principle) => (
+                <li key={principle} className="flex items-start gap-2 text-sm text-mist-300/75">
+                  <span className="mt-1.5 size-1 shrink-0 rounded-full bg-neon-green" />
+                  {principle}
                 </li>
               ))}
             </ul>

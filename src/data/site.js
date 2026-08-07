@@ -4,14 +4,21 @@
  * sin tocar los componentes.
  */
 
+/* ============================================================================
+ * PENDIENTE ANTES DE PUBLICAR
+ * Los cinco valores marcados con TODO son de relleno. Publicar el sitio con un
+ * correo o un WhatsApp que no existen significa perder todos los contactos que
+ * llegue a generar.
+ * ==========================================================================*/
+
 export const brand = {
-  name: 'Nexora',
-  suffix: 'Solutions',
+  name: 'Nexora', // TODO: nombre real de la marca
+  suffix: 'Solutions', // TODO: o dejarlo vacío
   tagline: 'Web · IA · Automatización',
-  email: 'hola@nexorasolutions.com',
-  phone: '+34 600 123 456',
+  email: 'hola@nexorasolutions.com', // TODO: correo real
+  phone: '+34 600 123 456', // TODO: teléfono real
   // Solo dígitos, con prefijo de país (formato que exige wa.me)
-  whatsapp: '34600123456',
+  whatsapp: '34600123456', // TODO: WhatsApp real
   location: 'Trabajamos en remoto con clientes de toda Latinoamérica y España',
   schedule: 'Lunes a viernes, 9:00 – 18:00 (GMT-5 / CET)',
   socials: [
@@ -22,14 +29,13 @@ export const brand = {
   ],
 }
 
-/** Sectores en los que se concentra la experiencia de la agencia. */
-export const sectors = [
-  'Clínicas y salud',
-  'Servicios profesionales',
-  'E-commerce y retail',
-  'Inmobiliarias',
-  'Educación y formación',
-  'Startups y SaaS',
+/** Reglas de trabajo. Son compromisos propios, así que se pueden afirmar. */
+export const workPrinciples = [
+  'Presupuesto cerrado por escrito',
+  '50% al inicio, 50% al entregar',
+  'Avances visibles cada semana',
+  'El código es tuyo',
+  '30 días de soporte incluidos',
 ]
 
 /** Enlaces legales del pie. Apuntan a páginas que aún hay que crear. */
@@ -47,16 +53,20 @@ export const legalLinks = [
 export const navLinks = [
   { label: 'Inicio', href: '#inicio' },
   { label: 'Automatización', href: '#automatizacion' },
-  { label: 'Portafolio', href: '#portafolio' },
+  { label: 'Demos', href: '#demos' },
   { label: 'FAQ', href: '#faq' },
   { label: 'Contacto', href: '#contacto' },
 ]
 
+/**
+ * Datos verificables únicamente: son compromisos que dependen de nosotros, no
+ * resultados de clientes que todavía no existen.
+ */
 export const heroStats = [
-  { value: '+120', label: 'Proyectos entregados' },
-  { value: '3.5x', label: 'Aumento medio de leads' },
-  { value: '14 días', label: 'Entrega media de una web' },
-  { value: '98%', label: 'Clientes que repiten' },
+  { value: '3', label: 'Ingenieros de sistemas en el equipo' },
+  { value: '< 24 h', label: 'Respuesta a tu solicitud' },
+  { value: '100%', label: 'Desarrollo a medida, sin plantillas' },
+  { value: 'Gratis', label: 'Primer diagnóstico, sin compromiso' },
 ]
 
 export const services = [
@@ -204,58 +214,71 @@ export const processSteps = [
   },
 ]
 
-export const projects = [
+/**
+ * Demos construidas por el equipo, no trabajos de cliente.
+ * Describen lo que sabemos montar y con qué, sin atribuirse resultados ajenos.
+ * Cuando haya proyectos reales entregados, se sustituyen por casos con números
+ * medidos y el permiso del cliente para publicarlos.
+ */
+export const demos = [
   {
-    title: 'Vertex Capital',
+    title: 'Web corporativa',
     category: 'Corporativa',
-    tags: ['Next.js', 'CMS', 'SEO'],
-    result: '+180% en solicitudes de contacto',
-    text: 'Web institucional para consultora financiera, con blog gestionable y captación segmentada.',
+    tags: ['React', 'Gestor de contenidos', 'SEO'],
+    includes: 'Blog editable, formularios conectados y estructura pensada para posicionar',
+    text: 'Sitio institucional para empresas de servicios: quiénes somos, qué hacemos y una vía clara de contacto.',
     visual: 'corporate',
   },
   {
-    title: 'Lumen Fit',
+    title: 'Landing de captación',
     category: 'Landing',
-    tags: ['Landing', 'A/B testing', 'Meta Ads'],
-    result: '4.1% de conversión en tráfico frío',
-    text: 'Landing de captación para campañas de pago, con test A/B y seguimiento de eventos.',
+    tags: ['Conversión', 'Meta / Google Ads', 'Analítica'],
+    includes: 'Seguimiento de eventos, píxel configurado y variantes para comparar',
+    text: 'Página única orientada a campañas de pago, con un solo objetivo: que el visitante deje sus datos.',
     visual: 'landing',
   },
   {
-    title: 'Nordic Store',
+    title: 'Tienda online',
     category: 'E-commerce',
-    tags: ['Shopify', 'UX', 'Checkout'],
-    result: '-38% de abandono en checkout',
-    text: 'Rediseño completo de tienda online y optimización del embudo de compra.',
+    tags: ['Catálogo', 'Pasarela de pago', 'Checkout'],
+    includes: 'Gestión de productos, pagos con Stripe o Mercado Pago y envío de pedidos',
+    text: 'Comercio electrónico con un proceso de compra corto, pensado para que el carrito no se abandone.',
     visual: 'ecommerce',
   },
   {
-    title: 'ClinicFlow',
+    title: 'Automatización de citas',
     category: 'Automatización',
-    tags: ['n8n', 'WhatsApp', 'IA'],
-    result: '620 h/año liberadas al equipo',
-    text: 'Agenda de citas automatizada con confirmaciones y recordatorios por WhatsApp.',
+    tags: ['n8n', 'WhatsApp', 'Calendario'],
+    includes: 'Confirmación automática, recordatorio previo y aviso al equipo',
+    text: 'Flujo que agenda, confirma y recuerda citas por WhatsApp sin que nadie tenga que escribir el mensaje.',
     visual: 'automation',
   },
   {
-    title: 'Atlas Metrics',
+    title: 'Panel de control',
     category: 'Dashboard',
-    tags: ['React', 'API', 'Datos'],
-    result: 'Reportes de 6 h a 4 min',
-    text: 'Panel interno que unifica datos de ventas, marketing y soporte en tiempo real.',
+    tags: ['React', 'APIs', 'Datos en vivo'],
+    includes: 'Conexión con tus herramientas y métricas actualizadas al momento',
+    text: 'Cuadro de mando que reúne en una sola pantalla datos que hoy viven repartidos en varias apps.',
     visual: 'dashboard',
   },
   {
-    title: 'Solaria Legal',
+    title: 'Asistente con IA',
     category: 'Automatización',
-    tags: ['Chatbot', 'CRM', 'Leads'],
-    result: '92% de consultas resueltas por IA',
-    text: 'Asistente con IA que filtra consultas, califica leads y los deriva al abogado correcto.',
+    tags: ['Chatbot', 'CRM', 'Calificación'],
+    includes: 'Entrenado con tu información, escala a una persona cuando hace falta',
+    text: 'Agente que atiende consultas, las clasifica y deriva al responsable adecuado con el contexto ya resumido.',
     visual: 'chatbot',
   },
 ]
 
-export const projectCategories = ['Todos', 'Corporativa', 'Landing', 'E-commerce', 'Automatización', 'Dashboard']
+export const demoCategories = [
+  'Todas',
+  'Corporativa',
+  'Landing',
+  'E-commerce',
+  'Automatización',
+  'Dashboard',
+]
 
 export const automationFeatures = [
   {
@@ -290,48 +313,60 @@ export const automationFeatures = [
   },
 ]
 
+/** Propiedades del sistema, no resultados prometidos. */
 export const automationMetrics = [
-  { value: '24/7', label: 'Atención sin descanso' },
-  { value: '-70%', label: 'Tiempo en tareas manuales' },
-  { value: '<30s', label: 'Tiempo de primera respuesta' },
+  { value: '24/7', label: 'Disponible sin descanso' },
+  { value: '< 30 s', label: 'Primera respuesta al cliente' },
+  { value: 'Ilimitadas', label: 'Conversaciones en paralelo' },
 ]
 
-export const testimonials = [
+/**
+ * El equipo sustituye a los testimonios mientras no haya clientes reales.
+ * Para un estudio que empieza, tres personas con nombre y cara generan más
+ * confianza que unas reseñas que nadie puede comprobar.
+ *
+ * TODO: nombres, roles y enlaces reales de los tres fundadores.
+ */
+export const team = [
   {
-    quote:
-      'Pasamos de responder mensajes a mano hasta las once de la noche a tener un asistente que filtra todo. En el primer mes cerramos un 40% más de citas con el mismo equipo.',
-    name: 'Mariana Duarte',
-    role: 'Directora',
-    company: 'Clínica Aurora',
-    initials: 'MD',
-    rating: 5,
+    name: 'Nombre Apellido',
+    initials: 'NA',
+    role: 'Producto y frontend',
+    focus: 'Diseña la experiencia y construye la interfaz. Es quien traduce lo que necesita tu negocio a algo que se pueda usar.',
+    skills: ['React', 'Diseño de interfaz', 'Conversión'],
+    linkedin: 'https://www.linkedin.com/',
   },
   {
-    quote:
-      'La web anterior era bonita y no vendía nada. Esta se ve mejor y además explica lo que hacemos. Las solicitudes de presupuesto se triplicaron en dos meses.',
-    name: 'Andrés Villalba',
-    role: 'Socio fundador',
-    company: 'Vertex Capital',
-    initials: 'AV',
-    rating: 5,
+    name: 'Nombre Apellido',
+    initials: 'NA',
+    role: 'Backend e integraciones',
+    focus: 'Levanta la infraestructura y conecta tus herramientas: base de datos, APIs, pagos y paneles internos.',
+    skills: ['Node.js', 'Bases de datos', 'APIs'],
+    linkedin: 'https://www.linkedin.com/',
   },
   {
-    quote:
-      'Lo que más valoro es que entendieron el negocio antes de diseñar. Nos propusieron automatizaciones que ni sabíamos que necesitábamos y hoy nos ahorran horas cada semana.',
-    name: 'Lucía Ferrer',
-    role: 'Head of Growth',
-    company: 'Nordic Store',
-    initials: 'LF',
-    rating: 5,
+    name: 'Nombre Apellido',
+    initials: 'NA',
+    role: 'Automatización e IA',
+    focus: 'Diseña los flujos que trabajan solos: chatbots, captación de leads y todo lo repetitivo que hoy hace una persona.',
+    skills: ['n8n', 'Agentes con IA', 'WhatsApp API'],
+    linkedin: 'https://www.linkedin.com/',
+  },
+]
+
+/** Argumentos honestos para contratar a un equipo que acaba de empezar. */
+export const teamPitch = [
+  {
+    title: 'Hablas con quien programa',
+    text: 'No hay capas intermedias ni gestores de cuenta. Tu proyecto lo desarrolla la misma persona que te responde.',
   },
   {
-    quote:
-      'Entregaron en tres semanas lo que otra agencia llevaba cuatro meses prometiendo. Comunicación clara, avances semanales y cero sorpresas en la factura.',
-    name: 'Tomás Rivas',
-    role: 'CEO',
-    company: 'Lumen Fit',
-    initials: 'TR',
-    rating: 5,
+    title: 'Precio de entrada',
+    text: 'Estamos construyendo nuestro portafolio, y eso se refleja en lo que cobramos. Tú ganas precio, nosotros ganamos un caso real.',
+  },
+  {
+    title: 'Formación de ingeniería',
+    text: 'Somos ingenieros de sistemas, no montadores de plantillas. Lo que entregamos está pensado para mantenerse y crecer.',
   },
 ]
 
@@ -367,6 +402,10 @@ export const faqs = [
   {
     q: '¿Trabajan con negocios fuera de mi país?',
     a: 'Sí. Trabajamos 100% en remoto con clientes de España y Latinoamérica. Las reuniones se hacen por videollamada y la comunicación diaria por WhatsApp o el canal que prefieras.',
+  },
+  {
+    q: '¿Cuánto tiempo llevan trabajando juntos?',
+    a: 'Somos un estudio nuevo: tres ingenieros de sistemas que decidieron montar esto juntos. Todavía estamos construyendo nuestro portafolio, y eso tiene dos consecuencias para ti. La primera es el precio: cobramos por debajo de lo que costará dentro de un año. La segunda es la atención: cada proyecto nos importa porque es nuestra carta de presentación. Si prefieres una agencia con cien casos a sus espaldas, es una decisión razonable y lo entendemos.',
   },
 ]
 

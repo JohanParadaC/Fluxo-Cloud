@@ -19,7 +19,7 @@ import FloatingActions from './components/FloatingActions'
 const views = {
   inicio: Home, // Portada + Servicios + Proceso
   automatizacion: AutomationView, // Automatización con IA + Beneficios
-  portafolio: Work, // Proyectos + Testimonios
+  demos: Work, // Demos + Equipo
   faq: Faq,
   contacto: Contact,
 }

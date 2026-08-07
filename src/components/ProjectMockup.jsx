@@ -1,6 +1,6 @@
 /**
  * Mockups de interfaz generados con CSS puro.
- * Se usan como vista previa de los proyectos del portafolio: cero imágenes,
+ * Se usan como vista previa de las demos: cero imágenes,
  * cero peticiones extra y siempre nítidos en cualquier pantalla.
  */
 
