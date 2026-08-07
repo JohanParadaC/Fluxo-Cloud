@@ -1,22 +1,28 @@
 import { motion, useReducedMotion } from 'framer-motion'
 
 const offsets = {
-  up: { y: 28, x: 0 },
-  down: { y: -28, x: 0 },
-  left: { x: 32, y: 0 },
-  right: { x: -32, y: 0 },
+  up: { y: 24, x: 0 },
+  down: { y: -24, x: 0 },
+  left: { x: 28, y: 0 },
+  right: { x: -28, y: 0 },
   none: { x: 0, y: 0 },
 }
 
 /**
  * Envoltorio de entrada al hacer scroll.
- * Respeta `prefers-reduced-motion`: si está activo, el contenido aparece sin desplazamiento.
+ *
+ * Anima solo `opacity` y `transform`. Antes incluía una transición de
+ * `filter: blur()`, que el navegador tiene que repintar en cada fotograma:
+ * multiplicado por las decenas de elementos que revela la página, era una de
+ * las causas principales del consumo de CPU al desplazarse.
+ *
+ * Respeta `prefers-reduced-motion`: en ese caso el contenido solo aparece.
  */
 export default function Reveal({
   children,
   delay = 0,
   from = 'up',
-  duration = 0.65,
+  duration = 0.55,
   className = '',
   as = 'div',
   ...rest
@@ -28,9 +34,9 @@ export default function Reveal({
   return (
     <MotionTag
       className={className}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, ...offset, filter: 'blur(6px)' }}
-      whileInView={reduce ? { opacity: 1 } : { opacity: 1, x: 0, y: 0, filter: 'blur(0px)' }}
-      viewport={{ once: true, amount: 0.25 }}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, ...offset }}
+      whileInView={reduce ? { opacity: 1 } : { opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{ duration, delay, ease: [0.21, 0.68, 0.35, 1] }}
       {...rest}
     >

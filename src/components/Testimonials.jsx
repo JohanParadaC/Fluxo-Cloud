@@ -16,7 +16,7 @@ const clients = [
 
 export default function Testimonials() {
   return (
-    <section id="testimonios" className="relative py-24 lg:py-32">
+    <section id="testimonios" className="relative py-20 lg:py-24">
       <div className="shell">
         <SectionHeading
           eyebrow="Testimonios"

@@ -8,7 +8,7 @@ import SectionHeading from './ui/SectionHeading'
 
 export default function Benefits() {
   return (
-    <section id="beneficios" className="relative py-24 lg:py-32">
+    <section id="beneficios" className="relative py-20 lg:py-24">
       {/* Trama de circuito */}
       <div
         aria-hidden

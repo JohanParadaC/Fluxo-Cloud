@@ -8,7 +8,7 @@ export default function Process() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="proceso" className="relative py-24 lg:py-32">
+    <section id="proceso" className="relative py-20 lg:py-24">
       <div className="shell">
         <SectionHeading
           eyebrow="Proceso de trabajo"

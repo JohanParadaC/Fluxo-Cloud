@@ -29,11 +29,13 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  /* Animaciones propias */
+  /* Animaciones propias.
+     Todas animan solo `transform` u `opacity`: son las dos propiedades que el
+     navegador resuelve en el compositor, sin repintar ni recalcular layout. */
   --animate-float: float 7s ease-in-out infinite;
   --animate-float-slow: float 11s ease-in-out infinite;
-  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
-  --animate-spin-slow: spin 18s linear infinite;
+  --animate-pulse-glow: pulse-glow 6s ease-in-out infinite;
+  --animate-spin-slow: spin 24s linear infinite;
   --animate-marquee: marquee 42s linear infinite;
   --animate-dash: dash 2.4s linear infinite;
   --animate-scan: scan 5s ease-in-out infinite;
@@ -49,15 +51,15 @@
   }
 }
 
+/* Solo opacidad: escalar un elemento con `blur` grande obliga a rasterizar el
+   desenfoque completo en cada fotograma, que es carísimo. */
 @keyframes pulse-glow {
   0%,
   100% {
-    opacity: 0.35;
-    transform: scale(1);
+    opacity: 0.4;
   }
   50% {
     opacity: 0.7;
-    transform: scale(1.08);
   }
 }
 
@@ -167,8 +169,26 @@
    Utilidades compartidas
    ========================================================================== */
 @layer components {
-  /* Cristal esmerilado */
+  /* Cristal esmerilado.
+     Sin `backdrop-filter`: sobre un fondo oscuro el resultado es casi idéntico,
+     y esa propiedad obliga al navegador a recomponer lo que hay detrás de cada
+     tarjeta en cada scroll. Con decenas de tarjetas era el mayor coste de la
+     página. La capa oscura translúcida reproduce el mismo efecto. */
   .glass {
+    background:
+      linear-gradient(
+        160deg,
+        rgba(255, 255, 255, 0.07),
+        rgba(255, 255, 255, 0.02) 45%,
+        rgba(255, 255, 255, 0.045)
+      ),
+      rgba(9, 15, 27, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  /* Cristal real, reservado para lo que se superpone al contenido:
+     la barra de navegación y el menú móvil. */
+  .glass-blur {
     background: linear-gradient(
       160deg,
       rgba(255, 255, 255, 0.07),

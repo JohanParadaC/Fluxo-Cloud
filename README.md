@@ -42,6 +42,10 @@ src/
 ├── data/site.js                TODO el contenido del sitio (texto, marca, datos)
 ├── lib/icons.js                Registro de iconos + paleta por acento
 ├── hooks/useHashRoute.js       Enrutado por hash, sin dependencias
+├── views/                      Una vista por entrada del menú
+│   ├── Home.jsx                Portada + Servicios + Proceso
+│   ├── AutomationView.jsx      Automatización con IA + Beneficios
+│   └── Work.jsx                Portafolio + Testimonios
 └── components/
     ├── Navbar.jsx              Menú fijo, vista activa, barra de progreso
     ├── Hero.jsx                Titular, CTAs y métricas de confianza
@@ -57,7 +61,7 @@ src/
     ├── Faq.jsx                 Acordeón accesible
     ├── Contact.jsx             CTA final, canales directos y formulario
     ├── ContactForm.jsx         Formulario con validación
-    ├── Footer.jsx              Pie con navegación y redes
+    ├── Footer.jsx              Servicios, sectores, contacto, redes y legal
     ├── FloatingActions.jsx     Burbuja de WhatsApp + volver arriba
     └── ui/                     Aurora, Reveal, SectionHeading, Button,
                                 SpotlightCard, NeuralCanvas
@@ -67,14 +71,35 @@ src/
 
 El enrutado es **por hash**, sin librería de routing ([`useHashRoute.js`](src/hooks/useHashRoute.js)). Se eligió así porque el sitio se publica como estático: los enlaces profundos (`/#portafolio`), el botón atrás del navegador y el refresco de página funcionan sin configurar redirecciones en el hosting.
 
+Son **cinco vistas**, y cada una agrupa las secciones que cuentan una misma historia para que ninguna quede corta:
+
+| Vista            | Hash               | Secciones que contiene              |
+| ---------------- | ------------------ | ----------------------------------- |
+| Inicio           | `#inicio`          | Portada · Servicios · Proceso       |
+| Automatización   | `#automatizacion`  | Automatización con IA · Beneficios  |
+| Portafolio       | `#portafolio`      | Proyectos · Testimonios             |
+| FAQ              | `#faq`             | Preguntas frecuentes                |
+| Contacto         | `#contacto`        | Contacto y formulario               |
+
 - `App.jsx` mantiene el objeto `views`, que asocia cada hash con su componente.
-- El menú es el único punto de navegación entre secciones. Los CTAs (`Solicitar cotización`, `Ver servicios`…) apuntan a `#contacto` y `#servicios`: son rutas de conversión, no navegación de sección.
-- Los hashes desconocidos **no** cambian de vista, de modo que anclas internas como `#contenido` (el enlace de salto de accesibilidad) siguen funcionando.
+- El menú es el único punto de navegación **entre vistas**. Los CTAs (`Solicitar cotización`, `Agendar diagnóstico`…) apuntan a `#contacto`: son rutas de conversión, no navegación de sección.
+- Los hashes que no son vistas **no** cambian de página: el navegador simplemente se desplaza al elemento. Así siguen funcionando anclas internas como `#servicios` o `#proceso` dentro de Inicio, y `#contenido` (el enlace de salto de accesibilidad).
 - Al cambiar de vista se sube al inicio de la página y se actualiza el `document.title`.
 
-Para añadir una sección: crear el componente, añadir la entrada en `navLinks` ([`site.js`](src/data/site.js)) y registrarla en `views` ([`App.jsx`](src/App.jsx)).
+Para añadir una sección: crear el componente y colgarlo de una vista existente en `src/views/`. Para añadir una vista entera: crear el componente, añadir la entrada en `navLinks` ([`site.js`](src/data/site.js)) y registrarla en `views` ([`App.jsx`](src/App.jsx)).
 
-El menú completo aparece a partir de `xl` (1280 px). Por debajo se usa el menú desplegable: con nueve secciones, los enlaces no caben en 1024 px sin comprimirlos.
+## Rendimiento
+
+La primera versión consumía alrededor de un 26 % de CPU de forma continua. Los cambios que lo corrigen, de mayor a menor impacto:
+
+1. **Fondo estático.** Los cuatro halos de `Aurora` animaban `opacity` y `scale` sobre elementos de 600 px con `blur(140px)`. Escalar un desenfoque obliga a rasterizarlo entero en cada fotograma, sin parar. Ahora es un único degradado radial que se pinta una vez.
+2. **`backdrop-filter` retirado de las tarjetas.** La clase `.glass` lo aplicaba a decenas de elementos, y esa propiedad recompone lo que hay detrás en cada scroll. Sobre fondo oscuro, una capa translúcida da el mismo resultado. Queda `.glass-blur` para lo que sí se superpone al contenido: barra de navegación, menú móvil y botones flotantes.
+3. **Sin `filter: blur()` en las animaciones de entrada.** `Reveal` desenfocaba y enfocaba cada bloque al aparecer; ahora solo usa `opacity` y `transform`, que el navegador resuelve en el compositor sin repintar.
+4. **Lienzo de la red neuronal más barato.** Fuera `shadowBlur` (un halo por nodo y fotograma era la operación más cara), 34 nodos en lugar de 70 —el cálculo de enlaces es cuadrático—, 30 fps en vez de 60, y parada completa fuera del viewport o con la pestaña en segundo plano.
+5. **Menos animación en pantalla.** Al dividir el sitio en vistas, el navegador solo mantiene vivas las animaciones de la sección visible. La vista de inicio, la más cargada, tiene siete elementos animados, todos de `transform` u `opacity`.
+6. **Barra de progreso sin muelle.** `useSpring` dejaba un bucle de animación abierto tras cada scroll; el valor directo de `useScroll` no.
+
+Si aun así quieres bajar más el consumo, lo siguiente sería quitar el lienzo del hero ([`NeuralCanvas`](src/components/ui/NeuralCanvas.jsx)) — es la única animación que ejecuta JavaScript de forma continua.
 
 ## Personalización
 

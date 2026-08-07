@@ -4,27 +4,22 @@ import { navLinks } from './data/site'
 import useHashRoute from './hooks/useHashRoute'
 import Aurora from './components/ui/Aurora'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Services from './components/Services'
-import Process from './components/Process'
-import Portfolio from './components/Portfolio'
-import Automation from './components/Automation'
-import Benefits from './components/Benefits'
-import Testimonials from './components/Testimonials'
+import Home from './views/Home'
+import AutomationView from './views/AutomationView'
+import Work from './views/Work'
 import Faq from './components/Faq'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import FloatingActions from './components/FloatingActions'
 
-/** Una vista por sección. La clave coincide con el hash de `navLinks`. */
+/**
+ * Una vista por entrada del menú. Cada una agrupa las secciones que cuentan
+ * una misma historia, para que ninguna quede demasiado corta.
+ */
 const views = {
-  inicio: Hero,
-  servicios: Services,
-  proceso: Process,
-  portafolio: Portfolio,
-  automatizacion: Automation,
-  beneficios: Benefits,
-  testimonios: Testimonials,
+  inicio: Home, // Portada + Servicios + Proceso
+  automatizacion: AutomationView, // Automatización con IA + Beneficios
+  portafolio: Work, // Proyectos + Testimonios
   faq: Faq,
   contacto: Contact,
 }
@@ -34,7 +29,7 @@ export default function App() {
   const route = useHashRoute(routes, 'inicio')
   const reduce = useReducedMotion()
 
-  const View = views[route] ?? Hero
+  const View = views[route] ?? Home
 
   // Cada vista empieza arriba: sin esto se heredaría el scroll de la anterior.
   useEffect(() => {
@@ -66,10 +61,10 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={route}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
-            transition={{ duration: 0.32, ease: [0.21, 0.68, 0.35, 1] }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.21, 0.68, 0.35, 1] }}
           >
             <View />
           </motion.div>

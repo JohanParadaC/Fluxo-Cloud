@@ -1,14 +1,12 @@
-import { ArrowRight } from 'lucide-react'
 import { automationFeatures, automationMetrics } from '../data/site'
 import { getIcon } from '../lib/icons'
-import Button from './ui/Button'
 import Reveal from './ui/Reveal'
 import SectionHeading from './ui/SectionHeading'
 import AutomationFlow from './AutomationFlow'
 
 export default function Automation() {
   return (
-    <section id="automatizacion" className="relative overflow-hidden py-24 lg:py-32">
+    <section id="automatizacion" className="relative overflow-hidden py-20 lg:py-24">
       {/* Fondo específico de la sección */}
       <div
         aria-hidden
@@ -76,14 +74,6 @@ export default function Automation() {
           })}
         </div>
 
-        <Reveal delay={0.1}>
-          <div className="mt-12 flex justify-center">
-            <Button href="#contacto" variant="ghost" size="lg">
-              Quiero automatizar mi negocio
-              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Button>
-          </div>
-        </Reveal>
       </div>
     </section>
   )

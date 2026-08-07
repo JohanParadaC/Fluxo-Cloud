@@ -27,7 +27,7 @@ export default function FloatingActions() {
             exit={{ opacity: 0, scale: 0.7 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="Volver arriba"
-            className="glass grid size-11 place-items-center rounded-full text-mist-300 transition-colors hover:text-neon-cyan"
+            className="glass-blur grid size-11 place-items-center rounded-full text-mist-300 transition-colors hover:text-neon-cyan"
           >
             <ArrowUp className="size-4.5" />
           </motion.button>

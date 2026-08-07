@@ -13,27 +13,41 @@ export const brand = {
   // Solo dígitos, con prefijo de país (formato que exige wa.me)
   whatsapp: '34600123456',
   location: 'Trabajamos en remoto con clientes de toda Latinoamérica y España',
+  schedule: 'Lunes a viernes, 9:00 – 18:00 (GMT-5 / CET)',
   socials: [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/' },
-    { label: 'Instagram', href: 'https://www.instagram.com/' },
-    { label: 'X', href: 'https://x.com/' },
-    { label: 'GitHub', href: 'https://github.com/' },
+    { label: 'LinkedIn', icon: 'Linkedin', href: 'https://www.linkedin.com/' },
+    { label: 'Instagram', icon: 'Instagram', href: 'https://www.instagram.com/' },
+    { label: 'X', icon: 'X', href: 'https://x.com/' },
+    { label: 'GitHub', icon: 'Github', href: 'https://github.com/' },
   ],
 }
 
+/** Sectores en los que se concentra la experiencia de la agencia. */
+export const sectors = [
+  'Clínicas y salud',
+  'Servicios profesionales',
+  'E-commerce y retail',
+  'Inmobiliarias',
+  'Educación y formación',
+  'Startups y SaaS',
+]
+
+/** Enlaces legales del pie. Apuntan a páginas que aún hay que crear. */
+export const legalLinks = [
+  { label: 'Aviso legal', href: '#contacto' },
+  { label: 'Política de privacidad', href: '#contacto' },
+  { label: 'Cookies', href: '#contacto' },
+]
+
 /**
- * Cada entrada es también una vista de la SPA: el `href` es la ruta (hash) que
- * la muestra. Añadir un elemento aquí y registrarlo en `views` (App.jsx) basta
- * para publicar una sección nueva.
+ * Cada entrada es una vista de la SPA: el `href` es la ruta (hash) que la
+ * muestra. Cada vista agrupa varias secciones para que ninguna quede corta;
+ * el reparto exacto está en `views` (App.jsx).
  */
 export const navLinks = [
   { label: 'Inicio', href: '#inicio' },
-  { label: 'Servicios', href: '#servicios' },
-  { label: 'Proceso', href: '#proceso' },
-  { label: 'Portafolio', href: '#portafolio' },
   { label: 'Automatización', href: '#automatizacion' },
-  { label: 'Beneficios', href: '#beneficios' },
-  { label: 'Testimonios', href: '#testimonios' },
+  { label: 'Portafolio', href: '#portafolio' },
   { label: 'FAQ', href: '#faq' },
   { label: 'Contacto', href: '#contacto' },
 ]

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
+import { AnimatePresence, motion, useScroll } from 'framer-motion'
 import { Menu, X, Zap } from 'lucide-react'
 import { brand, navLinks } from '../data/site'
 import Button from './ui/Button'
@@ -9,8 +9,9 @@ export default function Navbar({ route }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
+  // Sin muelle: `useSpring` mantiene un bucle de animación vivo después de cada
+  // scroll. El valor directo se actualiza igual de bien y no cuesta nada.
   const { scrollYProgress } = useScroll()
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, restDelta: 0.001 })
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -52,9 +53,8 @@ export default function Navbar({ route }) {
             </span>
           </a>
 
-          {/* Enlaces (escritorio). A partir de xl: con nueve secciones el menú
-              completo no cabe en pantallas de 1024 px sin apretarlo. */}
-          <ul className="hidden items-center gap-0.5 xl:flex">
+          {/* Enlaces (escritorio) */}
+          <ul className="hidden items-center gap-0.5 lg:flex">
             {navLinks.map((link) => {
               const isActive = route === link.href.slice(1)
               return (
@@ -95,7 +95,7 @@ export default function Navbar({ route }) {
               onClick={() => setOpen((value) => !value)}
               aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
               aria-expanded={open}
-              className="glass grid size-10 place-items-center rounded-xl text-mist-100 transition-colors hover:text-neon-cyan xl:hidden"
+              className="glass-blur grid size-10 place-items-center rounded-xl text-mist-100 transition-colors hover:text-neon-cyan lg:hidden"
             >
               {open ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
@@ -104,7 +104,7 @@ export default function Navbar({ route }) {
 
         {/* Barra de progreso de lectura */}
         <motion.div
-          style={{ scaleX: progress }}
+          style={{ scaleX: scrollYProgress }}
           className="h-px origin-left bg-gradient-to-r from-neon-cyan via-neon-blue to-neon-green"
         />
       </header>
@@ -117,7 +117,7 @@ export default function Navbar({ route }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 xl:hidden"
+            className="fixed inset-0 z-40 lg:hidden"
           >
             <div
               className="absolute inset-0 bg-ink-950/92 backdrop-blur-xl"

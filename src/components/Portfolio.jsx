@@ -13,7 +13,7 @@ export default function Portfolio() {
     filter === 'Todos' ? projects : projects.filter((project) => project.category === filter)
 
   return (
-    <section id="portafolio" className="relative py-24 lg:py-32">
+    <section id="portafolio" className="relative py-20 lg:py-24">
       <div className="shell">
         <SectionHeading
           eyebrow="Portafolio"

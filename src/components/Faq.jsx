@@ -10,7 +10,7 @@ export default function Faq() {
   const [open, setOpen] = useState(0)
 
   return (
-    <section id="faq" className="relative py-24 lg:py-32">
+    <section id="faq" className="relative py-20 lg:py-24">
       <div className="shell">
         <SectionHeading
           eyebrow="Preguntas frecuentes"

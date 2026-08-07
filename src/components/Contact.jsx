@@ -16,7 +16,7 @@ export default function Contact() {
   )}`
 
   return (
-    <section id="contacto" className="relative py-24 lg:py-32">
+    <section id="contacto" className="relative py-20 lg:py-24">
       <div className="shell">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
           {/* Columna de mensaje */}

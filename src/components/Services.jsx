@@ -7,7 +7,7 @@ import SpotlightCard from './ui/SpotlightCard'
 
 export default function Services() {
   return (
-    <section id="servicios" className="relative py-24 lg:py-32">
+    <section id="servicios" className="relative py-20 lg:py-24">
       <div className="shell">
         <SectionHeading
           eyebrow="Servicios"
