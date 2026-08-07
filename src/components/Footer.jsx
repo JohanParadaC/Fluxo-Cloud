@@ -118,13 +118,15 @@ export default function Footer() {
             construido para convertir.
           </p>
 
-          <a
-            href="#inicio"
+          {/* Botón, no enlace: "#inicio" cambiaría de vista en lugar de subir. */}
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="glass glow-border group inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium text-mist-300 transition-colors hover:text-neon-cyan"
           >
             Volver arriba
             <ArrowUp className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5" />
-          </a>
+          </button>
         </div>
       </div>
     </footer>

@@ -21,11 +21,17 @@ export const brand = {
   ],
 }
 
+/**
+ * Cada entrada es también una vista de la SPA: el `href` es la ruta (hash) que
+ * la muestra. Añadir un elemento aquí y registrarlo en `views` (App.jsx) basta
+ * para publicar una sección nueva.
+ */
 export const navLinks = [
   { label: 'Inicio', href: '#inicio' },
   { label: 'Servicios', href: '#servicios' },
   { label: 'Proceso', href: '#proceso' },
   { label: 'Portafolio', href: '#portafolio' },
+  { label: 'Automatización', href: '#automatizacion' },
   { label: 'Beneficios', href: '#beneficios' },
   { label: 'Testimonios', href: '#testimonios' },
   { label: 'FAQ', href: '#faq' },

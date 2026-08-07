@@ -1,21 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
 import { Menu, X, Zap } from 'lucide-react'
 import { brand, navLinks } from '../data/site'
-import useActiveSection from '../hooks/useActiveSection'
 import Button from './ui/Button'
 
-export default function Navbar() {
+/** `route` es la vista activa de la SPA; marca el enlace correspondiente. */
+export default function Navbar({ route }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
-
-  // Se observa también "automatizacion", que no está en el menú: así ninguna
-  // pestaña queda marcada por error mientras se atraviesa esa sección.
-  const sectionIds = useMemo(
-    () => [...navLinks.map((link) => link.href.slice(1)), 'automatizacion'],
-    []
-  )
-  const active = useActiveSection(sectionIds)
 
   const { scrollYProgress } = useScroll()
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, restDelta: 0.001 })
@@ -34,6 +26,9 @@ export default function Navbar() {
       document.body.style.overflow = ''
     }
   }, [open])
+
+  // Cierra el menú al cambiar de vista, también con el botón atrás del navegador.
+  useEffect(() => setOpen(false), [route])
 
   return (
     <>
@@ -57,14 +52,16 @@ export default function Navbar() {
             </span>
           </a>
 
-          {/* Enlaces (escritorio) */}
-          <ul className="hidden items-center gap-0.5 lg:flex">
+          {/* Enlaces (escritorio). A partir de xl: con nueve secciones el menú
+              completo no cabe en pantallas de 1024 px sin apretarlo. */}
+          <ul className="hidden items-center gap-0.5 xl:flex">
             {navLinks.map((link) => {
-              const isActive = active === link.href.slice(1)
+              const isActive = route === link.href.slice(1)
               return (
                 <li key={link.href}>
                   <a
                     href={link.href}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`relative rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300 ${
                       isActive ? 'text-mist-100' : 'text-mist-300/75 hover:text-mist-100'
                     }`}
@@ -98,7 +95,7 @@ export default function Navbar() {
               onClick={() => setOpen((value) => !value)}
               aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
               aria-expanded={open}
-              className="glass grid size-10 place-items-center rounded-xl text-mist-100 transition-colors hover:text-neon-cyan lg:hidden"
+              className="glass grid size-10 place-items-center rounded-xl text-mist-100 transition-colors hover:text-neon-cyan xl:hidden"
             >
               {open ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
@@ -120,7 +117,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 lg:hidden"
+            className="fixed inset-0 z-40 xl:hidden"
           >
             <div
               className="absolute inset-0 bg-ink-950/92 backdrop-blur-xl"
@@ -132,28 +129,38 @@ export default function Navbar() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -18, opacity: 0 }}
               transition={{ duration: 0.32, ease: [0.21, 0.68, 0.35, 1] }}
-              className="relative flex h-full flex-col justify-center px-7 pt-20 pb-10"
+              className="relative flex h-full flex-col justify-center overflow-y-auto px-7 pt-20 pb-10"
             >
-              <ul className="flex flex-col gap-1">
-                {navLinks.map((link, index) => (
-                  <motion.li
-                    key={link.href}
-                    initial={{ opacity: 0, x: -18 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.06 + index * 0.045, duration: 0.35 }}
-                  >
-                    <a
-                      href={link.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-baseline gap-3 border-b border-white/[0.06] py-3.5 font-display text-2xl font-semibold text-mist-100 transition-colors hover:text-neon-cyan"
+              <ul className="flex flex-col">
+                {navLinks.map((link, index) => {
+                  const isActive = route === link.href.slice(1)
+                  return (
+                    <motion.li
+                      key={link.href}
+                      initial={{ opacity: 0, x: -18 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.06 + index * 0.04, duration: 0.35 }}
                     >
-                      <span className="font-mono text-xs text-neon-cyan/60">
-                        0{index + 1}
-                      </span>
-                      {link.label}
-                    </a>
-                  </motion.li>
-                ))}
+                      <a
+                        href={link.href}
+                        onClick={() => setOpen(false)}
+                        aria-current={isActive ? 'page' : undefined}
+                        className={`flex items-baseline gap-3 border-b border-white/[0.06] py-3 font-display text-xl font-semibold transition-colors ${
+                          isActive ? 'text-neon-cyan' : 'text-mist-100 hover:text-neon-cyan'
+                        }`}
+                      >
+                        <span
+                          className={`font-mono text-xs ${
+                            isActive ? 'text-neon-green' : 'text-neon-cyan/60'
+                          }`}
+                        >
+                          0{index + 1}
+                        </span>
+                        {link.label}
+                      </a>
+                    </motion.li>
+                  )
+                })}
               </ul>
 
               <Button

@@ -103,24 +103,18 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Indicador de scroll */}
-      <motion.a
-        href="#servicios"
-        aria-label="Desplazar a servicios"
+      {/* Pista de navegación: en la SPA no hay scroll hacia la siguiente sección,
+          se cambia de vista desde el menú. */}
+      <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.8 }}
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-mist-500 transition-colors hover:text-neon-cyan lg:flex"
+        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-mist-500 uppercase lg:flex"
       >
-        <span className="font-mono text-[10px] tracking-[0.2em] uppercase">Scroll</span>
-        <span className="grid h-9 w-5.5 place-items-start rounded-full border border-white/15 p-1">
-          <motion.span
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-            className="size-1.5 rounded-full bg-neon-cyan"
-          />
-        </span>
-      </motion.a>
+        <span className="h-px w-8 bg-gradient-to-r from-transparent to-neon-cyan/60" />
+        Explora cada sección desde el menú
+        <span className="h-px w-8 bg-gradient-to-l from-transparent to-neon-cyan/60" />
+      </motion.p>
     </section>
   )
 }
