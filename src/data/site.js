@@ -12,15 +12,15 @@
  * ==========================================================================*/
 
 export const brand = {
-  name: 'Nexora', // TODO: nombre real de la marca
-  suffix: 'Solutions', // TODO: o dejarlo vacío
+  name: 'Fluxo', // TODO: nombre real de la marca
+  suffix: 'Cloud', // TODO: o dejarlo vacío
   tagline: 'Web · IA · Automatización',
   email: 'fluxo_j_s@fluxocloudlabs.net', // TODO: correo real
-  phone: '+34 600 123 456', // TODO: teléfono real
+  phone: '+57 316 974 8529', // TODO: teléfono real
   // Solo dígitos, con prefijo de país (formato que exige wa.me)
-  whatsapp: '34600123456', // TODO: WhatsApp real
+  whatsapp: '3169748529', // TODO: WhatsApp real
   location: 'Trabajamos en remoto con clientes de toda Latinoamérica y España',
-  schedule: 'Lunes a viernes, 9:00 – 18:00 (GMT-5 / CET)',
+  schedule: 'Lunes a viernes, 24 Horas (GMT-5 / CET)',
   socials: [
     { label: 'LinkedIn', icon: 'Linkedin', href: 'https://www.linkedin.com/' },
     { label: 'Instagram', icon: 'Instagram', href: 'https://www.instagram.com/' },

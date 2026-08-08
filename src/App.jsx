@@ -40,8 +40,8 @@ export default function App() {
   useEffect(() => {
     const current = navLinks.find((link) => link.href === `#${route}`)
     document.title = current
-      ? `${current.label} | Nexora Solutions`
-      : 'Nexora Solutions | Diseño web e inteligencia artificial para tu negocio'
+      ? `${current.label} | Fluxo Cloud`
+      : 'Fluxo Cloud | Diseño web e inteligencia artificial para tu negocio'
   }, [route])
 
   return (

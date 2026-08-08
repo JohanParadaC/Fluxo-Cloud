@@ -1,4 +1,4 @@
-# Nexora Solutions — Landing page de agencia digital
+# Fluxo Cloud — Landing page de agencia digital
 
 Sitio one-page para una agencia especializada en **diseño web, soluciones digitales y automatización con IA**.
 Estética futurista sobre negro profundo, con acentos neón (cian, azul eléctrico, verde), glassmorphism y animaciones de scroll.
