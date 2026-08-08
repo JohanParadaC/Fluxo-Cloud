@@ -120,7 +120,7 @@
         100
       ],
       "parameters": {
-        "jsCode": "// Deja solo las columnas de la hoja. Sin esto, Google Sheets crearía una\n// columna por cada campo interno del flujo.\n\nreturn $input.all().map((item) => ({\n  json: {\n    ID: item.json.leadId,\n    Fecha: item.json.receivedAt,\n    Nombre: item.json.name,\n    Email: item.json.email,\n    Telefono: item.json.phone,\n    Empresa: item.json.company,\n    Servicio: item.json.serviceLabel,\n    Presupuesto: item.json.budgetLabel,\n    Mensaje: item.json.message,\n    Score: item.json.score,\n    Clasificacion: item.json.tier,\n    Estado: 'Nuevo',\n    Accion: item.json.action,\n    ResponderAntesDe: item.json.dueAt,\n    Motivos: item.json.reasonsText,\n    Origen: item.json.source,\n    Pagina: item.json.page,\n  },\n}));"
+        "jsCode": "// Deja solo las columnas de la hoja. Sin esto, Google Sheets crearía una\n// columna por cada campo interno del flujo.\n\nreturn $input.all().map((item) => ({\n  json: {\n    ID: item.json.leadId,\n    Fecha: item.json.receivedAt,\n    Nombre: item.json.name,\n    Email: item.json.email,\n    Telefono: item.json.phone,\n    Empresa: item.json.company,\n    Servicio: item.json.serviceLabel,\n    Presupuesto: item.json.budgetLabel,\n    Mensaje: item.json.message,\n    Score: item.json.score,\n    Clasificacion: item.json.tier,\n    Estado: 'Nuevo',\n    Accion: item.json.action,\n    ResponderAntesDe: item.json.dueAt,\n    Motivos: item.json.reasonsText,\n    Origen: item.json.source,\n    Pagina: item.json.page,\n    // Prepara el terreno para varios clientes: cuando montéis el formulario\n    // de un cliente, duplicad el flujo y cambiad este valor.\n    Cliente: 'Interno',\n  },\n}));"
       }
     },
     {

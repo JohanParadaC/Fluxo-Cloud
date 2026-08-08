@@ -44,8 +44,10 @@ En n8n: menú **⋯ → Import from File** y selecciona `workflow.json`.
 Hoja nueva en Google Sheets, pestaña llamada **Leads**, y esta fila 1 exacta (los nombres deben coincidir, el nodo mapea por nombre de columna):
 
 ```
-ID	Fecha	Nombre	Email	Telefono	Empresa	Servicio	Presupuesto	Mensaje	Score	Clasificacion	Estado	Accion	ResponderAntesDe	Motivos	Origen	Pagina
+ID	Fecha	Nombre	Email	Telefono	Empresa	Servicio	Presupuesto	Mensaje	Score	Clasificacion	Estado	Accion	ResponderAntesDe	Motivos	Origen	Pagina	Cliente
 ```
+
+La columna `Cliente` está de más hoy —todos los leads son vuestros— pero evita rehacer el flujo y migrar la hoja el día que captéis leads para un cliente. Cuesta cero ponerla ahora.
 
 Copia el ID de la hoja desde su URL:
 
@@ -135,7 +137,18 @@ Para vosotros esto es doblemente útil: es vuestra automatización funcionando s
 
 **Sin IA en la calificación.** Un modelo costaría dinero por cada lead, añadiría latencia y daría resultados que no se pueden auditar. Con estas reglas sabéis exactamente por qué cada lead sacó su nota. Si más adelante queréis IA, el sitio natural es un nodo extra que resuma el mensaje y proponga un enfoque de venta — no que sustituya la puntuación.
 
-**Columna `Estado`.** La hoja escribe `Nuevo` en cada fila. Cambiadlo a mano a `Contactado`, `Propuesta enviada`, `Ganado` o `Perdido`. Eso es un CRM suficiente para los primeros 100 clientes, y es gratis.
+**Columna `Estado`.** La hoja escribe `Nuevo` en cada fila. Se cambia desde el [panel de leads](../../panel/README.md) o a mano en la hoja. Eso es un CRM suficiente para los primeros 100 clientes, y es gratis.
+
+## El panel
+
+`panel-api.json` es un segundo flujo, independiente de este, que expone dos webhooks para el [panel de leads](../../panel/README.md):
+
+| Webhook | Qué hace |
+| --- | --- |
+| `GET /panel-leads?key=…` | Devuelve todos los leads de la hoja en JSON |
+| `POST /panel-estado` | Cambia el estado de un lead |
+
+Se importa igual que este y necesita las mismas credenciales de Google Sheets. Antes de activarlo hay que cambiar `CAMBIA_ESTA_CLAVE` en los **dos** nodos de comprobación —deben ser idénticas— y pegar el ID de la hoja en los dos nodos de Sheets.
 
 ## Próximos pasos
 

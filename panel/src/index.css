@@ -1,0 +1,114 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Tokens de diseño.
+   Son los mismos que los de la web pública (`src/index.css` del sitio) para
+   que el panel se vea de la misma familia. Si cambias la paleta allí, cámbiala
+   también aquí.
+   ========================================================================== */
+@theme {
+  --color-ink-950: #04060c;
+  --color-ink-900: #070b14;
+  --color-ink-850: #090f1b;
+  --color-ink-800: #0d1524;
+  --color-ink-700: #131e33;
+
+  --color-neon-blue: #3b82f6;
+  --color-neon-cyan: #22d3ee;
+  --color-neon-green: #3ff294;
+  --color-neon-violet: #8b5cf6;
+  --color-neon-amber: #fbbf24;
+  --color-neon-rose: #fb7185;
+
+  --color-mist-100: #eef4ff;
+  --color-mist-300: #b9c6dd;
+  --color-mist-500: #7d8ba6;
+
+  --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink-950);
+    color: var(--color-mist-300);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    color: var(--color-mist-100);
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-neon-cyan);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #223048;
+    border-radius: 99px;
+    border: 2px solid var(--color-ink-950);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Sin `backdrop-filter`: en una tabla con muchas filas es caro y aquí no
+     aporta nada, porque detrás solo hay fondo plano. */
+  .card {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+      rgba(9, 15, 27, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .text-gradient {
+    background: linear-gradient(100deg, var(--color-neon-cyan), var(--color-neon-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .field {
+    width: 100%;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.55rem 0.85rem;
+    font-size: 0.875rem;
+    color: var(--color-mist-100);
+    transition: border-color 0.2s ease;
+  }
+  .field:focus {
+    border-color: rgba(34, 211, 238, 0.5);
+    outline: none;
+  }
+  .field::placeholder {
+    color: rgba(125, 139, 166, 0.7);
+  }
+}

@@ -15,7 +15,7 @@ export const brand = {
   name: 'Nexora', // TODO: nombre real de la marca
   suffix: 'Solutions', // TODO: o dejarlo vacío
   tagline: 'Web · IA · Automatización',
-  email: 'hola@nexorasolutions.com', // TODO: correo real
+  email: 'fluxo_j_s@fluxocloudlabs.net', // TODO: correo real
   phone: '+34 600 123 456', // TODO: teléfono real
   // Solo dígitos, con prefijo de país (formato que exige wa.me)
   whatsapp: '34600123456', // TODO: WhatsApp real
