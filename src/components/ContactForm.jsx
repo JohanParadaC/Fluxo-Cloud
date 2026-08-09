@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { AlertCircle, CheckCircle2, Loader2, Mail, Send } from 'lucide-react'
 import { brand, budgetOptions, serviceOptions } from '../data/site'
+import { registrarEvento, EVENTOS } from '../lib/analytics'
 import Button from './ui/Button'
 
 /**
@@ -104,8 +104,13 @@ export default function ContactForm() {
         window.open(url, '_blank', 'noopener,noreferrer')
       }
       setStatus('sent')
+      registrarEvento(EVENTOS.formularioEnviado, {
+        servicio: form.service,
+        presupuesto: form.budget,
+      })
     } catch {
       setStatus('error')
+      registrarEvento(EVENTOS.formularioError)
     }
   }
 
@@ -120,14 +125,9 @@ export default function ContactForm() {
         className="animate-pulse-glow absolute -top-24 -right-24 size-56 rounded-full bg-neon-cyan/15 blur-3xl"
       />
 
-      <AnimatePresence mode="wait">
-        {status === 'sent' ? (
-          <motion.div
-            key="sent"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative flex min-h-[26rem] flex-col items-center justify-center text-center"
+      {status === 'sent' ? (
+          <div
+            className="anim-zoom relative flex min-h-[26rem] flex-col items-center justify-center text-center"
           >
             <span className="grid size-16 place-items-center rounded-2xl bg-neon-green/15 text-neon-green ring-1 ring-neon-green/30">
               <CheckCircle2 className="size-8" strokeWidth={1.8} />
@@ -156,16 +156,12 @@ export default function ContactForm() {
                 Enviar otra solicitud
               </Button>
             </div>
-          </motion.div>
+          </div>
         ) : (
-          <motion.form
-            key="form"
+          <form
             onSubmit={handleSubmit}
             noValidate
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative flex flex-col gap-4"
+            className="anim-fade relative flex flex-col gap-4"
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -354,9 +350,8 @@ export default function ContactForm() {
             <p className="text-center text-[11px] text-mist-500">
               Respuesta en menos de 24 h laborables · Sin compromiso
             </p>
-          </motion.form>
+          </form>
         )}
-      </AnimatePresence>
     </div>
   )
 }

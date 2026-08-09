@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import useInView from '../hooks/useInView'
 import {
   Bell,
   BrainCircuit,
@@ -80,10 +80,26 @@ function Core() {
 }
 
 export default function AutomationFlow() {
+  // Un solo observador para todo el diagrama: los retardos escalonan la entrada
+  // de cada nodo desde CSS, sin necesidad de observar cada uno por separado.
+  const [ref, visible] = useInView({ threshold: 0.25 })
+
+  /**
+   * Entrada escalonada de cada pieza.
+   * Se aplica a un envoltorio interior, nunca al elemento posicionado: ese usa
+   * `-translate-y-1/2` de Tailwind y un `transform` en línea lo anularía,
+   * descolocando el nodo respecto a su conector.
+   */
+  const entrada = (retardo, desplazamiento) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'none' : desplazamiento,
+    transition: `opacity .5s ease-out ${retardo}s, transform .5s ease-out ${retardo}s`,
+  })
+
   return (
     <>
       {/* ---------- Escritorio: diagrama con conectores ---------- */}
-      <div className="relative hidden aspect-16/7 w-full lg:block">
+      <div ref={ref} className="relative hidden aspect-16/7 w-full lg:block">
         {/* Conectores. viewBox en porcentajes para que casen con la posición de los nodos. */}
         <svg
           aria-hidden
@@ -103,7 +119,7 @@ export default function AutomationFlow() {
           </defs>
 
           {rows.map((y, index) => (
-            <motion.path
+            <path
               key={`in-${y}`}
               d={`M 24 ${y} C 31 ${y}, 30 50, 37 50`}
               fill="none"
@@ -112,15 +128,15 @@ export default function AutomationFlow() {
               strokeDasharray="5 4"
               vectorEffect="non-scaling-stroke"
               className="animate-dash"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.9, delay: 0.2 + index * 0.1 }}
+              style={{
+                opacity: visible ? 1 : 0,
+                transition: `opacity .9s ease-out ${0.2 + index * 0.1}s`,
+              }}
             />
           ))}
 
           {rows.map((y, index) => (
-            <motion.path
+            <path
               key={`out-${y}`}
               d={`M 63 50 C 70 50, 69 ${y}, 76 ${y}`}
               fill="none"
@@ -129,53 +145,45 @@ export default function AutomationFlow() {
               strokeDasharray="5 4"
               vectorEffect="non-scaling-stroke"
               className="animate-dash"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.9, delay: 0.6 + index * 0.1 }}
+              style={{
+                opacity: visible ? 1 : 0,
+                transition: `opacity .9s ease-out ${0.6 + index * 0.1}s`,
+              }}
             />
           ))}
         </svg>
 
         {/* Entradas */}
         {inputs.map((item, index) => (
-          <motion.div
+          <div
             key={item.label}
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: index * 0.09 }}
             className="absolute left-0 w-[24%] -translate-y-1/2"
             style={{ top: `${rows[index]}%` }}
           >
-            <Node {...item} tone="cyan" />
-          </motion.div>
+            <div style={entrada(index * 0.09, 'translateX(-24px)')}>
+              <Node {...item} tone="cyan" />
+            </div>
+          </div>
         ))}
 
         {/* Núcleo */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="absolute top-1/2 left-1/2 w-[26%] -translate-x-1/2 -translate-y-1/2"
-        >
-          <Core />
-        </motion.div>
+        <div className="absolute top-1/2 left-1/2 w-[26%] -translate-x-1/2 -translate-y-1/2">
+          <div style={entrada(0.35, 'scale(0.85)')}>
+            <Core />
+          </div>
+        </div>
 
         {/* Salidas */}
         {outputs.map((item, index) => (
-          <motion.div
+          <div
             key={item.label}
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: 0.5 + index * 0.09 }}
             className="absolute right-0 w-[24%] -translate-y-1/2"
             style={{ top: `${rows[index]}%` }}
           >
-            <Node {...item} tone="green" align="right" />
-          </motion.div>
+            <div style={entrada(0.5 + index * 0.09, 'translateX(24px)')}>
+              <Node {...item} tone="green" align="right" />
+            </div>
+          </div>
         ))}
       </div>
 

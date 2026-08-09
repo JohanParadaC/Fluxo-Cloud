@@ -97,6 +97,92 @@
   }
 }
 
+/* Entrada de una vista al cambiar de ruta. Sustituye a la transición que hacía
+   Framer Motion: se dispara sola porque React remonta el nodo al cambiar la
+   clave. No hay animación de salida, que apenas se percibía y obligaba a
+   mantener montado el árbol anterior. */
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Entrada escalonada de lo que ya está en pantalla al cargar (el hero).
+   Para lo que aparece al hacer scroll se usa el componente `Reveal`. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Barras del gráfico del hero: crecen hasta la altura que marca --h. */
+@keyframes grow-bar {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: var(--h, 50%);
+  }
+}
+
+/* Subrayado del titular */
+@keyframes grow-underline {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Punto que baja dentro del indicador de scroll */
+@keyframes scroll-hint {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(12px);
+  }
+}
+
 /* ==========================================================================
    Base
    ========================================================================== */
@@ -284,6 +370,80 @@
   @media (min-width: 768px) {
     .shell {
       padding-inline: 2rem;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     Animaciones de entrada.
+     Antes las hacía Framer Motion. Ahora son CSS puro disparado por un
+     IntersectionObserver (`useInView`), que es lo único que hacía falta:
+     el navegador resuelve `opacity` y `transform` en el compositor.
+     ---------------------------------------------------------------------- */
+  [data-reveal] {
+    opacity: 0;
+    transition:
+      opacity 0.55s cubic-bezier(0.21, 0.68, 0.35, 1),
+      transform 0.55s cubic-bezier(0.21, 0.68, 0.35, 1);
+  }
+
+  [data-reveal='up'] {
+    transform: translateY(24px);
+  }
+  [data-reveal='down'] {
+    transform: translateY(-24px);
+  }
+  [data-reveal='left'] {
+    transform: translateX(28px);
+  }
+  [data-reveal='right'] {
+    transform: translateX(-28px);
+  }
+  [data-reveal='none'] {
+    transform: none;
+  }
+
+  [data-reveal][data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Entrada de cada vista de la SPA */
+  .view-enter {
+    animation: view-in 0.32s cubic-bezier(0.21, 0.68, 0.35, 1) both;
+  }
+
+  /* Utilidades de entrada para elementos visibles desde el primer momento */
+  .anim-rise {
+    animation: rise 0.7s cubic-bezier(0.21, 0.68, 0.35, 1) both;
+  }
+  .anim-fade {
+    animation: fade-in 0.6s ease-out both;
+  }
+  .anim-zoom {
+    animation: zoom-in 0.45s cubic-bezier(0.21, 0.68, 0.35, 1) both;
+  }
+  .anim-bar {
+    animation: grow-bar 0.9s cubic-bezier(0.16, 0.84, 0.44, 1) both;
+  }
+
+  /* Con movimiento reducido nada se desplaza: el contenido aparece y ya. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .view-enter,
+    .anim-rise,
+    .anim-fade,
+    .anim-zoom,
+    .anim-bar {
+      animation: none;
+    }
+
+    .anim-bar {
+      height: var(--h, 50%);
     }
   }
 }

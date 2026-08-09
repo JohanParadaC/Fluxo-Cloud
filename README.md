@@ -10,8 +10,10 @@ Estética futurista sobre negro profundo, con acentos neón (cian, azul eléctri
 | UI             | React 19                         |
 | Bundler        | Vite 7                           |
 | Estilos        | Tailwind CSS 4 (configuración CSS-first en `src/index.css`) |
-| Animaciones    | Framer Motion 12                 |
+| Animaciones    | CSS + IntersectionObserver (sin librería) |
 | Iconos         | lucide-react                     |
+
+Tres dependencias en total. El JavaScript inicial son **81 KB comprimidos**, y cada vista se descarga aparte cuando se pide.
 
 Sin imágenes externas: todas las ilustraciones (panel del hero, mockups del portafolio, diagrama de flujo) están hechas con CSS y SVG.
 
@@ -33,33 +35,72 @@ npm run build
 
 ## Estructura
 
+| Carpeta | Qué es |
+| --- | --- |
+| raíz | Web pública (este documento) |
+| [`panel/`](panel/README.md) | Panel interno de leads — proyecto y despliegue aparte |
+| [`automations/`](automations/captacion-leads/README.md) | Flujos de n8n: captación, calificación y API del panel |
+
 ```
 src/
-├── App.jsx                     Composición de la página
+├── App.jsx                     Mapa de vistas, carga diferida y transiciones
 ├── index.css                   Tokens de diseño, animaciones y utilidades
 ├── data/site.js                TODO el contenido del sitio (texto, marca, datos)
-├── lib/icons.js                Registro de iconos + paleta por acento
-├── hooks/useActiveSection.js   Resalta el enlace del menú según el scroll
+├── lib/
+│   ├── icons.js                Registro de iconos + paleta por acento
+│   └── analytics.js            Umami o Plausible, y los eventos de conversión
+├── hooks/
+│   ├── useHashRoute.js         Enrutado por hash, sin dependencias
+│   └── useInView.js            IntersectionObserver para las entradas al scroll
+├── views/                      Una vista por entrada del menú
+│   ├── Home.jsx                Portada + Servicios + Proceso
+│   ├── AutomationView.jsx      Automatización con IA + Beneficios
+│   └── Work.jsx                Demos + Equipo
 └── components/
-    ├── Navbar.jsx              Menú fijo, activo por sección, barra de progreso
+    ├── Navbar.jsx              Menú fijo, vista activa, barra de progreso
     ├── Hero.jsx                Titular, CTAs y métricas de confianza
     ├── HeroVisual.jsx          Panel de control futurista animado
     ├── Services.jsx            4 bloques de servicios
     ├── Process.jsx             5 pasos del proceso de trabajo
-    ├── Portfolio.jsx           Showcase con filtros por categoría
+    ├── Demos.jsx               Demos propias, con filtros por categoría
+    ├── Team.jsx                Los tres fundadores
     ├── ProjectMockup.jsx       6 mockups de interfaz en CSS puro
     ├── Automation.jsx          Sección de IA y automatización
     ├── AutomationFlow.jsx      Diagrama de flujo (entradas → motor → salidas)
     ├── Benefits.jsx            "¿Por qué elegirnos?"
-    ├── Testimonials.jsx        Testimonios + marquesina de clientes
     ├── Faq.jsx                 Acordeón accesible
     ├── Contact.jsx             CTA final, canales directos y formulario
     ├── ContactForm.jsx         Formulario con validación
-    ├── Footer.jsx              Pie con navegación y redes
+    ├── BookingModal.jsx        Agenda de Cal.com en un modal
+    ├── Footer.jsx              Servicios, cómo trabajamos, contacto y legal
     ├── FloatingActions.jsx     Burbuja de WhatsApp + volver arriba
     └── ui/                     Aurora, Reveal, SectionHeading, Button,
                                 SpotlightCard, NeuralCanvas
 ```
+
+## Agenda y analítica
+
+Las dos se activan solas al rellenar su variable en `.env`; vacías, el sitio funciona igual que antes.
+
+**Agenda** (`VITE_CAL_LINK`): con un enlace de Cal.com, "Agendar diagnóstico" abre el calendario en un modal y la reunión queda reservada sin intercambiar mensajes. Se usa un `iframe` en lugar del script de incrustación oficial para no cargar JavaScript de terceros en todas las visitas: solo se descarga al pulsar. El modal lleva un enlace de salida por si el calendario no carga dentro del marco.
+
+**Analítica** (`VITE_ANALYTICS_*`): admite Umami y Plausible, los dos sin cookies y sin banner de consentimiento en la UE. Como las rutas van por hash, las vistas se registran a mano en cada cambio; el seguimiento automático contaría una sola página para todo el sitio.
+
+Los eventos de conversión están centralizados en [`src/lib/analytics.js`](src/lib/analytics.js): clic en WhatsApp, apertura de la agenda, envío del formulario, correo y teléfono. Sin proveedor configurado, las llamadas no hacen nada.
+
+Lo más razonable para vosotros es **Umami autoalojado en el VPS**: gratis y los datos de los visitantes no salen de vuestra máquina.
+
+## Animaciones y peso
+
+No hay librería de animación. Las entradas al hacer scroll son CSS disparado por un `IntersectionObserver` ([`useInView`](src/hooks/useInView.js) + `[data-reveal]` en `index.css`), y todo lo demás son transiciones y `@keyframes`. Solo se animan `opacity` y `transform`, que el navegador resuelve en el compositor.
+
+Cada vista se carga cuando se pide, y se precarga al pasar el ratón por su enlace del menú, así que al pulsar ya suele estar descargada.
+
+| | Antes | Ahora |
+| --- | --- | --- |
+| JavaScript inicial | 133 KB gzip | **81 KB gzip** |
+| Dependencias | 4 | 3 |
+| Vistas | todo en un archivo | 4 chunks aparte |
 
 ## Personalización
 

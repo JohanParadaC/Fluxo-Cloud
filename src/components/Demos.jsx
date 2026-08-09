@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight, Check, FlaskConical } from 'lucide-react'
 import { demoCategories, demos } from '../data/site'
 import Reveal from './ui/Reveal'
@@ -31,20 +30,12 @@ export default function Demos() {
                   key={category}
                   type="button"
                   onClick={() => setFilter(category)}
-                  className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${
-                    isActive ? 'text-ink-950' : 'text-mist-300/75 hover:text-mist-100'
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                    isActive
+                      ? 'bg-gradient-to-r from-neon-cyan to-neon-green text-ink-950'
+                      : 'text-mist-300/75 ring-1 ring-white/[0.09] hover:text-mist-100 hover:ring-white/20'
                   }`}
                 >
-                  {isActive && (
-                    <motion.span
-                      layoutId="demo-filter"
-                      className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-neon-cyan to-neon-green"
-                      transition={{ type: 'spring', stiffness: 340, damping: 30 }}
-                    />
-                  )}
-                  {!isActive && (
-                    <span className="absolute inset-0 -z-10 rounded-full ring-1 ring-white/[0.09]" />
-                  )}
                   {category}
                 </button>
               )
@@ -52,58 +43,50 @@ export default function Demos() {
           </div>
         </Reveal>
 
-        {/* Rejilla */}
-        <motion.div layout className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <AnimatePresence mode="popLayout">
-            {visible.map((demo) => (
-              <motion.article
-                key={demo.title}
-                layout
-                initial={{ opacity: 0, scale: 0.94 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.94 }}
-                transition={{ duration: 0.38, ease: [0.21, 0.68, 0.35, 1] }}
-                className="glass glow-border group relative flex flex-col overflow-hidden rounded-2xl p-4 transition-transform duration-500 hover:-translate-y-1.5"
-              >
-                <div className="relative">
-                  <ProjectMockup variant={demo.visual} />
-                  {/* Etiqueta explícita: nadie debe confundir esto con un caso real. */}
-                  <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-md bg-ink-950/80 px-2 py-1 font-mono text-[10px] tracking-wide text-neon-cyan ring-1 ring-neon-cyan/25">
-                    <FlaskConical className="size-3" />
-                    DEMO
-                  </span>
+        {/* Rejilla. La clave cambia con el filtro para que la nueva selección
+            entre con la animación de CSS en lugar de aparecer de golpe. */}
+        <div key={filter} className="anim-fade mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {visible.map((demo) => (
+            <article
+              key={demo.title}
+              className="glass glow-border group relative flex flex-col overflow-hidden rounded-2xl p-4 transition-transform duration-500 hover:-translate-y-1.5"
+            >
+              <div className="relative">
+                <ProjectMockup variant={demo.visual} />
+                {/* Etiqueta explícita: nadie debe confundir esto con un caso real. */}
+                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-md bg-ink-950/80 px-2 py-1 font-mono text-[10px] tracking-wide text-neon-cyan ring-1 ring-neon-cyan/25">
+                  <FlaskConical className="size-3" />
+                  DEMO
+                </span>
+              </div>
+
+              <div className="flex flex-1 flex-col p-2 pt-5">
+                <span className="font-mono text-[10px] tracking-[0.16em] text-neon-cyan uppercase">
+                  {demo.category}
+                </span>
+                <h3 className="mt-1.5 font-display text-lg font-bold text-mist-100">{demo.title}</h3>
+
+                <p className="mt-2.5 text-sm leading-relaxed text-mist-300/75">{demo.text}</p>
+
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {demo.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-md bg-white/[0.05] px-2 py-0.5 font-mono text-[10px] text-mist-500 ring-1 ring-white/[0.06]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
 
-                <div className="flex flex-1 flex-col p-2 pt-5">
-                  <span className="font-mono text-[10px] tracking-[0.16em] text-neon-cyan uppercase">
-                    {demo.category}
-                  </span>
-                  <h3 className="mt-1.5 font-display text-lg font-bold text-mist-100">
-                    {demo.title}
-                  </h3>
-
-                  <p className="mt-2.5 text-sm leading-relaxed text-mist-300/75">{demo.text}</p>
-
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {demo.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-md bg-white/[0.05] px-2 py-0.5 font-mono text-[10px] text-mist-500 ring-1 ring-white/[0.06]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <p className="mt-5 flex items-start gap-2 border-t border-white/[0.07] pt-4 text-sm text-mist-300">
-                    <Check className="mt-0.5 size-4 shrink-0 text-neon-green" strokeWidth={2.4} />
-                    {demo.includes}
-                  </p>
-                </div>
-              </motion.article>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+                <p className="mt-5 flex items-start gap-2 border-t border-white/[0.07] pt-4 text-sm text-mist-300">
+                  <Check className="mt-0.5 size-4 shrink-0 text-neon-green" strokeWidth={2.4} />
+                  {demo.includes}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
 
         <Reveal delay={0.1}>
           <p className="mt-10 text-center text-sm text-mist-500">

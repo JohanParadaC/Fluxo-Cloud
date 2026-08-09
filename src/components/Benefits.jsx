@@ -1,12 +1,14 @@
-import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, CalendarCheck } from 'lucide-react'
 import { benefits } from '../data/site'
 import { getIcon } from '../lib/icons'
+import { useBooking } from './BookingModal'
+import { registrarEvento, EVENTOS } from '../lib/analytics'
 import Button from './ui/Button'
 import Reveal from './ui/Reveal'
 import SectionHeading from './ui/SectionHeading'
 
 export default function Benefits() {
+  const { abrirAgenda } = useBooking()
   return (
     <section id="beneficios" className="relative py-20 lg:py-24">
       {/* Trama de circuito */}
@@ -29,11 +31,7 @@ export default function Benefits() {
 
             return (
               <Reveal key={benefit.title} delay={index * 0.06} className="h-full">
-                <motion.article
-                  whileHover={{ y: -6 }}
-                  transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-                  className="glass glow-border group relative h-full overflow-hidden rounded-2xl p-6"
-                >
+                <article className="glass glow-border group relative h-full overflow-hidden rounded-2xl p-6 transition-transform duration-300 ease-out hover:-translate-y-1.5">
                   {/* Halo de fondo al hover */}
                   <span
                     aria-hidden
@@ -54,7 +52,7 @@ export default function Benefits() {
                     aria-hidden
                     className="absolute inset-x-6 bottom-0 h-px origin-left scale-x-0 bg-gradient-to-r from-neon-cyan to-transparent transition-transform duration-500 group-hover:scale-x-100"
                   />
-                </motion.article>
+                </article>
               </Reveal>
             )
           })}
@@ -77,10 +75,33 @@ export default function Benefits() {
                   un diagnóstico claro, contrates o no.
                 </p>
               </div>
-              <Button href="#contacto" variant="primary" size="lg" className="w-full md:w-auto">
-                Agendar diagnóstico
-                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
+
+              {/* Con agenda configurada se reserva en el momento; sin ella, el
+                  botón sigue llevando al formulario como hasta ahora. */}
+              {abrirAgenda ? (
+                <Button
+                  as="button"
+                  type="button"
+                  onClick={() => abrirAgenda('beneficios')}
+                  variant="primary"
+                  size="lg"
+                  className="w-full md:w-auto"
+                >
+                  <CalendarCheck className="size-4" />
+                  Elegir hora ahora
+                </Button>
+              ) : (
+                <Button
+                  href="#contacto"
+                  variant="primary"
+                  size="lg"
+                  className="w-full md:w-auto"
+                  onClick={() => registrarEvento(EVENTOS.cotizacionClick, { origen: 'beneficios' })}
+                >
+                  Agendar diagnóstico
+                  <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Button>
+              )}
             </div>
           </div>
         </Reveal>

@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Activity, Bot, Cpu, MessageCircle, TrendingUp, Workflow, Zap } from 'lucide-react'
 
 const bars = [38, 55, 44, 72, 61, 88, 96]
@@ -11,14 +10,12 @@ const flow = [
 ]
 
 /**
- * Composición visual del hero: panel de control futurista flotante,
- * con gráfico animado, flujo de automatización y elementos orbitando.
- * Todo construido con CSS/SVG — sin imágenes que descargar.
+ * Composición visual del hero: panel de control futurista flotante.
+ * Todo con CSS y SVG — sin imágenes que descargar y sin librería de animación.
  */
 export default function HeroVisual() {
   return (
     <div className="relative mx-auto w-full max-w-[36rem]">
-      {/* Resplandor trasero */}
       <div className="absolute inset-0 -z-10 scale-110 rounded-[3rem] bg-gradient-to-tr from-neon-blue/25 via-neon-cyan/15 to-neon-green/20 blur-3xl" />
 
       {/* Anillo orbital */}
@@ -31,19 +28,15 @@ export default function HeroVisual() {
       </div>
 
       {/* Panel principal */}
-      <motion.div
-        initial={{ opacity: 0, y: 40, rotateX: 10 }}
-        animate={{ opacity: 1, y: 0, rotateX: 0 }}
-        transition={{ duration: 0.9, delay: 0.25, ease: [0.21, 0.68, 0.35, 1] }}
-        className="glass relative overflow-hidden rounded-2xl p-4 shadow-[0_40px_120px_-40px_rgba(34,211,238,0.45)] sm:rounded-3xl sm:p-5"
+      <div
+        className="anim-rise glass relative overflow-hidden rounded-2xl p-4 shadow-[0_40px_120px_-40px_rgba(34,211,238,0.45)] sm:rounded-3xl sm:p-5"
+        style={{ animationDelay: '0.25s', animationDuration: '0.9s' }}
       >
-        {/* Línea de escaneo */}
         <span
           aria-hidden
           className="animate-scan pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-neon-cyan/25 to-transparent"
         />
 
-        {/* Barra de ventana */}
         <div className="mb-4 flex items-center justify-between">
           <div className="flex gap-1.5">
             <span className="size-2.5 rounded-full bg-red-400/60" />
@@ -56,7 +49,6 @@ export default function HeroVisual() {
           </div>
         </div>
 
-        {/* Métricas */}
         <div className="mb-4 grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { icon: Activity, value: '1.284', label: 'Visitas hoy', tint: 'text-neon-cyan' },
@@ -86,12 +78,10 @@ export default function HeroVisual() {
           </div>
           <div className="flex h-20 items-end gap-1.5 sm:h-24 sm:gap-2">
             {bars.map((height, index) => (
-              <motion.div
+              <span
                 key={index}
-                initial={{ height: 0 }}
-                animate={{ height: `${height}%` }}
-                transition={{ duration: 0.9, delay: 0.7 + index * 0.08, ease: 'easeOut' }}
-                className="flex-1 rounded-t-md bg-gradient-to-t from-neon-blue/30 via-neon-cyan/70 to-neon-green"
+                className="anim-bar flex-1 rounded-t-md bg-gradient-to-t from-neon-blue/30 via-neon-cyan/70 to-neon-green"
+                style={{ '--h': `${height}%`, animationDelay: `${0.7 + index * 0.08}s` }}
               />
             ))}
           </div>
@@ -105,11 +95,9 @@ export default function HeroVisual() {
           <div className="flex items-center justify-between">
             {flow.map((node, index) => (
               <div key={node.label} className="flex flex-1 items-center last:flex-none">
-                <motion.div
-                  initial={{ scale: 0.6, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 1.1 + index * 0.16, duration: 0.4 }}
-                  className="flex flex-col items-center gap-1.5"
+                <div
+                  className="anim-zoom flex flex-col items-center gap-1.5"
+                  style={{ animationDelay: `${1.1 + index * 0.16}s` }}
                 >
                   <span className="grid size-8 place-items-center rounded-lg border border-neon-cyan/25 bg-neon-cyan/8 text-neon-cyan sm:size-9">
                     <node.icon className="size-3.5 sm:size-4" />
@@ -117,7 +105,7 @@ export default function HeroVisual() {
                   <span className="max-w-14 text-center text-[9px] leading-tight text-mist-500 sm:text-[10px]">
                     {node.label}
                   </span>
-                </motion.div>
+                </div>
 
                 {index < flow.length - 1 && (
                   <svg className="mx-1 h-px flex-1" preserveAspectRatio="none" viewBox="0 0 100 1">
@@ -143,38 +131,40 @@ export default function HeroVisual() {
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Tarjetas flotantes */}
-      <motion.div
-        initial={{ opacity: 0, x: -24 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1, duration: 0.6 }}
-        className="animate-float glass absolute -top-5 -left-3 hidden items-center gap-2 rounded-xl px-3 py-2 shadow-xl sm:flex md:-left-10"
+      {/* Tarjetas flotantes.
+          Dos capas a propósito: `animation` es una sola propiedad, así que la
+          aparición y el flotar continuo no pueden vivir en el mismo elemento. */}
+      <div
+        className="anim-fade absolute -top-5 -left-3 hidden sm:block md:-left-10"
+        style={{ animationDelay: '1s' }}
       >
-        <span className="grid size-8 place-items-center rounded-lg bg-[#25D366]/15 text-[#25D366]">
-          <MessageCircle className="size-4" />
-        </span>
-        <div>
-          <p className="text-xs font-semibold text-mist-100">WhatsApp</p>
-          <p className="font-mono text-[10px] text-neon-green">respuesta en 12s</p>
+        <div className="animate-float glass flex items-center gap-2 rounded-xl px-3 py-2 shadow-xl">
+          <span className="grid size-8 place-items-center rounded-lg bg-[#25D366]/15 text-[#25D366]">
+            <MessageCircle className="size-4" />
+          </span>
+          <div>
+            <p className="text-xs font-semibold text-mist-100">WhatsApp</p>
+            <p className="font-mono text-[10px] text-neon-green">respuesta en 12s</p>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, x: 24 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-        className="animate-float-slow glass absolute -right-3 -bottom-6 hidden items-center gap-2 rounded-xl px-3 py-2 shadow-xl sm:flex md:-right-10"
+      <div
+        className="anim-fade absolute -right-3 -bottom-6 hidden sm:block md:-right-10"
+        style={{ animationDelay: '1.2s' }}
       >
-        <span className="grid size-8 place-items-center rounded-lg bg-neon-violet/15 text-neon-violet">
-          <Cpu className="size-4" />
-        </span>
-        <div>
-          <p className="text-xs font-semibold text-mist-100">Agente IA</p>
-          <p className="font-mono text-[10px] text-neon-cyan">entrenado y activo</p>
+        <div className="animate-float-slow glass flex items-center gap-2 rounded-xl px-3 py-2 shadow-xl">
+          <span className="grid size-8 place-items-center rounded-lg bg-neon-violet/15 text-neon-violet">
+            <Cpu className="size-4" />
+          </span>
+          <div>
+            <p className="text-xs font-semibold text-mist-100">Agente IA</p>
+            <p className="font-mono text-[10px] text-neon-cyan">entrenado y activo</p>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }

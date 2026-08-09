@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUp, MessageCircle } from 'lucide-react'
 import { brand } from '../data/site'
+import { registrarEvento, EVENTOS } from '../lib/analytics'
 
 export default function FloatingActions() {
   const [showTop, setShowTop] = useState(false)
@@ -18,27 +18,27 @@ export default function FloatingActions() {
 
   return (
     <div className="fixed right-4 bottom-4 z-40 flex flex-col items-end gap-3 sm:right-6 sm:bottom-6">
-      <AnimatePresence>
-        {showTop && (
-          <motion.button
-            type="button"
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.7 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            aria-label="Volver arriba"
-            className="glass-blur grid size-11 place-items-center rounded-full text-mist-300 transition-colors hover:text-neon-cyan"
-          >
-            <ArrowUp className="size-4.5" />
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {/* Siempre montado: aparecer y desaparecer se resuelve con transiciones
+          CSS, sin necesidad de orquestar el desmontaje. */}
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Volver arriba"
+        aria-hidden={!showTop}
+        tabIndex={showTop ? 0 : -1}
+        className={`glass-blur grid size-11 place-items-center rounded-full text-mist-300 transition-all duration-300 hover:text-neon-cyan ${
+          showTop ? 'scale-100 opacity-100' : 'pointer-events-none scale-75 opacity-0'
+        }`}
+      >
+        <ArrowUp className="size-4.5" />
+      </button>
 
       <a
         href={whatsappHref}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Escribir por WhatsApp"
+        onClick={() => registrarEvento(EVENTOS.whatsapp, { origen: 'burbuja' })}
         className="group relative grid size-14 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_12px_36px_-8px_rgba(37,211,102,0.75)] transition-transform duration-300 hover:scale-105"
       >
         <span

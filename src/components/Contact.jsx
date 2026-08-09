@@ -1,5 +1,7 @@
-import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
+import { CalendarCheck, Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { brand } from '../data/site'
+import { useBooking } from './BookingModal'
+import { registrarEvento, EVENTOS } from '../lib/analytics'
 import Button from './ui/Button'
 import Reveal from './ui/Reveal'
 import ContactForm from './ContactForm'
@@ -11,6 +13,8 @@ const guarantees = [
 ]
 
 export default function Contact() {
+  const { abrirAgenda } = useBooking()
+
   const whatsappHref = `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(
     'Hola, me gustaría recibir información sobre sus servicios.'
   )}`
@@ -58,6 +62,22 @@ export default function Contact() {
             {/* Canales directos */}
             <Reveal delay={0.24}>
               <div className="mt-9 flex flex-col gap-3">
+                {/* La reserva directa va primero: es el camino más corto entre
+                    el interés y una reunión en el calendario. */}
+                {abrirAgenda && (
+                  <Button
+                    as="button"
+                    type="button"
+                    onClick={() => abrirAgenda('contacto')}
+                    variant="primary"
+                    size="lg"
+                    className="w-full sm:w-auto"
+                  >
+                    <CalendarCheck className="size-4.5" />
+                    Elegir hora para el diagnóstico
+                  </Button>
+                )}
+
                 <Button
                   href={whatsappHref}
                   target="_blank"
@@ -65,6 +85,7 @@ export default function Contact() {
                   variant="whatsapp"
                   size="lg"
                   className="w-full sm:w-auto"
+                  onClick={() => registrarEvento(EVENTOS.whatsapp, { origen: 'contacto' })}
                 >
                   <MessageCircle className="size-4.5" />
                   Escribir por WhatsApp
@@ -73,6 +94,7 @@ export default function Contact() {
                 <div className="mt-2 grid gap-3 sm:grid-cols-2">
                   <a
                     href={`mailto:${brand.email}`}
+                    onClick={() => registrarEvento(EVENTOS.emailClick, { origen: 'contacto' })}
                     className="glass glow-border group flex items-center gap-3 rounded-xl px-4 py-3.5 transition-transform duration-400 hover:-translate-y-0.5"
                   >
                     <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-neon-cyan/12 text-neon-cyan">
@@ -88,6 +110,7 @@ export default function Contact() {
 
                   <a
                     href={`tel:${brand.phone.replace(/\s/g, '')}`}
+                    onClick={() => registrarEvento(EVENTOS.telefonoClick, { origen: 'contacto' })}
                     className="glass glow-border group flex items-center gap-3 rounded-xl px-4 py-3.5 transition-transform duration-400 hover:-translate-y-0.5"
                   >
                     <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-neon-blue/12 text-neon-blue">

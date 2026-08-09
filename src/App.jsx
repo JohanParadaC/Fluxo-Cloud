@@ -1,51 +1,79 @@
-import { useEffect, useMemo } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef } from 'react'
 import { navLinks } from './data/site'
 import useHashRoute from './hooks/useHashRoute'
+import { iniciarAnalitica, registrarVista } from './lib/analytics'
 import Aurora from './components/ui/Aurora'
 import Navbar from './components/Navbar'
-import Home from './views/Home'
-import AutomationView from './views/AutomationView'
-import Work from './views/Work'
-import Faq from './components/Faq'
-import Contact from './components/Contact'
 import Footer from './components/Footer'
 import FloatingActions from './components/FloatingActions'
+import { BookingProvider } from './components/BookingModal'
+import Home from './views/Home'
 
 /**
- * Una vista por entrada del menú. Cada una agrupa las secciones que cuentan
- * una misma historia, para que ninguna quede demasiado corta.
+ * Carga diferida por vista.
+ *
+ * Inicio se importa de forma normal: es la puerta de entrada y hacerla
+ * diferida añadiría una petición extra justo en la primera impresión.
+ * El resto se descarga al pedirlo, o antes si el visitante pasa el ratón
+ * por encima de su enlace del menú.
  */
+const cargadores = {
+  automatizacion: () => import('./views/AutomationView'),
+  demos: () => import('./views/Work'),
+  faq: () => import('./components/Faq'),
+  contacto: () => import('./components/Contact'),
+}
+
 const views = {
-  inicio: Home, // Portada + Servicios + Proceso
-  automatizacion: AutomationView, // Automatización con IA + Beneficios
-  demos: Work, // Demos + Equipo
-  faq: Faq,
-  contacto: Contact,
+  inicio: Home,
+  automatizacion: lazy(cargadores.automatizacion),
+  demos: lazy(cargadores.demos),
+  faq: lazy(cargadores.faq),
+  contacto: lazy(cargadores.contacto),
+}
+
+/** Hueco mientras llega el código de la vista. Ocupa alto para que el pie
+ *  no dé un salto hacia arriba durante la carga. */
+function Cargando() {
+  return (
+    <div className="shell flex min-h-[70vh] items-center justify-center py-24">
+      <span className="size-6 animate-spin rounded-full border-2 border-white/10 border-t-neon-cyan" />
+    </div>
+  )
 }
 
 export default function App() {
   const routes = useMemo(() => navLinks.map((link) => link.href.slice(1)), [])
   const route = useHashRoute(routes, 'inicio')
-  const reduce = useReducedMotion()
+  const precargadas = useRef(new Set())
 
   const View = views[route] ?? Home
 
-  // Cada vista empieza arriba: sin esto se heredaría el scroll de la anterior.
+  /** Empieza a descargar una vista antes de que la pidan. */
+  const precargar = useCallback((destino) => {
+    if (precargadas.current.has(destino)) return
+    precargadas.current.add(destino)
+    cargadores[destino]?.()
+  }, [])
+
+  useEffect(() => {
+    iniciarAnalitica()
+  }, [])
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' })
-  }, [route])
 
-  // El título refleja la vista activa, para el historial y las pestañas.
-  useEffect(() => {
-    const current = navLinks.find((link) => link.href === `#${route}`)
-    document.title = current
-      ? `${current.label} | Fluxo Cloud`
+    const actual = navLinks.find((link) => link.href === `#${route}`)
+    document.title = actual
+      ? `${actual.label} | Fluxo Cloud`
       : 'Fluxo Cloud | Diseño web e inteligencia artificial para tu negocio'
+
+    // La vista ya tiene su título antes de contabilizarla.
+    registrarVista(route)
   }, [route])
 
   return (
-    <>
+    <BookingProvider>
       <Aurora />
 
       <a
@@ -55,24 +83,20 @@ export default function App() {
         Saltar al contenido
       </a>
 
-      <Navbar route={route} />
+      <Navbar route={route} onPrefetch={precargar} />
 
       <main id="contenido" tabIndex={-1} className="min-h-screen focus:outline-none">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={route}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
-            animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.21, 0.68, 0.35, 1] }}
-          >
+        {/* La clave fuerza el remontaje al cambiar de ruta, y con él la
+            animación de entrada definida en CSS. */}
+        <div key={route} className="view-enter">
+          <Suspense fallback={<Cargando />}>
             <View />
-          </motion.div>
-        </AnimatePresence>
+          </Suspense>
+        </div>
       </main>
 
       <Footer />
       <FloatingActions />
-    </>
+    </BookingProvider>
   )
 }

@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { MessageCircleQuestion, Plus } from 'lucide-react'
+import { CalendarCheck, MessageCircleQuestion, Plus } from 'lucide-react'
 import { brand, faqs } from '../data/site'
+import { useBooking } from './BookingModal'
+import { registrarEvento, EVENTOS } from '../lib/analytics'
 import Button from './ui/Button'
 import Reveal from './ui/Reveal'
 import SectionHeading from './ui/SectionHeading'
 
 export default function Faq() {
   const [open, setOpen] = useState(0)
+  const { abrirAgenda } = useBooking()
 
   return (
     <section id="faq" className="relative py-20 lg:py-24">
@@ -50,38 +52,35 @@ export default function Faq() {
                         >
                           {item.q}
                         </span>
-                        <motion.span
-                          animate={{ rotate: isOpen ? 135 : 0 }}
-                          transition={{ duration: 0.3, ease: 'easeOut' }}
-                          className={`grid size-8 shrink-0 place-items-center rounded-lg ring-1 transition-colors duration-300 ${
+                        <span
+                          className={`grid size-8 shrink-0 place-items-center rounded-lg ring-1 transition-all duration-300 ${
                             isOpen
-                              ? 'bg-neon-cyan/15 text-neon-cyan ring-neon-cyan/30'
+                              ? 'rotate-[135deg] bg-neon-cyan/15 text-neon-cyan ring-neon-cyan/30'
                               : 'text-mist-500 ring-white/10'
                           }`}
                         >
                           <Plus className="size-4" />
-                        </motion.span>
+                        </span>
                       </button>
                     </h3>
 
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div
-                          id={panelId}
-                          role="region"
-                          aria-labelledby={buttonId}
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.32, ease: [0.21, 0.68, 0.35, 1] }}
-                          className="overflow-hidden"
-                        >
-                          <p className="px-6 pb-6 text-sm leading-relaxed text-mist-300/80">
-                            {item.a}
-                          </p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {/* Acordeón sin JavaScript de animación: se transiciona
+                        `grid-template-rows` de 0fr a 1fr, que es la única forma
+                        de animar hasta "alto automático" con CSS puro. */}
+                    <div
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
+                      className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                        isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <p className="px-6 pb-6 text-sm leading-relaxed text-mist-300/80">
+                          {item.a}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </Reveal>
               )
@@ -106,7 +105,24 @@ export default function Faq() {
                 final decidas no trabajar con nosotros.
               </p>
               <div className="relative mt-6 flex flex-col gap-2.5">
-                <Button href="#contacto" variant="primary" size="md">
+                {abrirAgenda && (
+                  <Button
+                    as="button"
+                    type="button"
+                    onClick={() => abrirAgenda('faq')}
+                    variant="primary"
+                    size="md"
+                  >
+                    <CalendarCheck className="size-4" />
+                    Agendar una llamada
+                  </Button>
+                )}
+                <Button
+                  href="#contacto"
+                  variant={abrirAgenda ? 'ghost' : 'primary'}
+                  size="md"
+                  onClick={() => registrarEvento(EVENTOS.cotizacionClick, { origen: 'faq' })}
+                >
                   Escribir a un especialista
                 </Button>
                 <Button
@@ -115,6 +131,7 @@ export default function Faq() {
                   rel="noopener noreferrer"
                   variant="outline"
                   size="md"
+                  onClick={() => registrarEvento(EVENTOS.whatsapp, { origen: 'faq' })}
                 >
                   Preguntar por WhatsApp
                 </Button>
