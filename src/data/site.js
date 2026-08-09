@@ -4,23 +4,22 @@
  * sin tocar los componentes.
  */
 
-/* ============================================================================
- * PENDIENTE ANTES DE PUBLICAR
- * Los cinco valores marcados con TODO son de relleno. Publicar el sitio con un
- * correo o un WhatsApp que no existen significa perder todos los contactos que
- * llegue a generar.
- * ==========================================================================*/
-
 export const brand = {
-  name: 'Fluxo', // TODO: nombre real de la marca
-  suffix: 'Cloud', // TODO: o dejarlo vacío
+  name: 'Fluxo',
+  suffix: 'Cloud',
+  domain: 'fluxocloudlabs.net',
   tagline: 'Web · IA · Automatización',
-  email: 'fluxo_j_s@fluxocloudlabs.net', // TODO: correo real
-  phone: '+57 316 974 8529', // TODO: teléfono real
-  // Solo dígitos, con prefijo de país (formato que exige wa.me)
-  whatsapp: '3169748529', // TODO: WhatsApp real
+  email: 'fluxo_j_s@fluxocloudlabs.net',
+  phone: '+57 316 974 8529',
+  // Solo dígitos y CON prefijo de país: wa.me lo exige. Sin el 57 delante,
+  // WhatsApp no reconoce el número y el enlace no abre ninguna conversación.
+  whatsapp: '573169748529',
   location: 'Trabajamos en remoto con clientes de toda Latinoamérica y España',
+  // TODO: "Lunes a viernes" y "24 Horas" se contradicen. Decidid cuál es:
+  // o el horario de oficina, o atención continua (que la IA sí puede sostener).
   schedule: 'Lunes a viernes, 24 Horas (GMT-5 / CET)',
+  // TODO: sustituir por los perfiles reales. Hoy apuntan a las portadas de cada
+  // red, que da peor impresión que no tener el icono.
   socials: [
     { label: 'LinkedIn', icon: 'Linkedin', href: 'https://www.linkedin.com/' },
     { label: 'Instagram', icon: 'Instagram', href: 'https://www.instagram.com/' },

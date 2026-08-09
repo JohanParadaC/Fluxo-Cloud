@@ -52,7 +52,7 @@ export default function HeroVisual() {
           </div>
           <div className="flex items-center gap-1.5 rounded-full bg-white/[0.05] px-2.5 py-1 font-mono text-[10px] text-mist-500">
             <span className="size-1.5 animate-pulse rounded-full bg-neon-green" />
-            panel.nexora.ai
+            panel.fluxocloudlabs.net
           </div>
         </div>
 
