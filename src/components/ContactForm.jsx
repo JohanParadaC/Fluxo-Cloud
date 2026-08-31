@@ -211,7 +211,7 @@ export default function ContactForm() {
                   autoComplete="tel"
                   value={form.phone}
                   onChange={update('phone')}
-                  placeholder="+34 600 000 000"
+                  placeholder="+57 300 000 0000"
                   className={fieldClass}
                 />
               </div>

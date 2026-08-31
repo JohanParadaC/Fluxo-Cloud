@@ -400,7 +400,7 @@ export const faqs = [
   },
   {
     q: '¿Trabajan con negocios fuera de mi país?',
-    a: 'Sí. Trabajamos 100% en remoto con clientes de España y Latinoamérica. Las reuniones se hacen por videollamada y la comunicación diaria por WhatsApp o el canal que prefieras.',
+    a: 'Sí. Trabajamos 100% en remoto con clientes de Latinoamérica y España. Las reuniones se hacen por videollamada y la comunicación diaria por WhatsApp o el canal que prefieras.',
   },
   {
     q: '¿Cuánto tiempo llevan trabajando juntos?',
@@ -424,9 +424,9 @@ export const serviceOptions = [
 ]
 
 export const budgetOptions = [
-  { value: 'lt1k', label: 'Menos de 1.000 €' },
-  { value: '1k-3k', label: '1.000 € - 3.000 €' },
-  { value: '3k-7k', label: '3.000 € - 7.000 €' },
-  { value: 'gt7k', label: 'Más de 7.000 €' },
+  { value: 'lt1k', label: 'Menos de 1.000 USD' },
+  { value: '1k-3k', label: '1.000 - 3.000 USD' },
+  { value: '3k-7k', label: '3.000 - 7.000 USD' },
+  { value: 'gt7k', label: 'Más de 7.000 USD' },
   { value: 'unknown', label: 'Aún no lo tengo definido' },
 ]

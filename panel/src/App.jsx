@@ -121,7 +121,7 @@ function Panel({ clave, onSalir }) {
               <h1 className="font-display text-sm font-bold text-mist-100">Panel de leads</h1>
               <p className="font-mono text-[10px] text-mist-500">
                 {ultimaCarga
-                  ? 'actualizado ' + ultimaCarga.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+                  ? 'actualizado ' + ultimaCarga.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
                   : 'cargando…'}
               </p>
             </div>

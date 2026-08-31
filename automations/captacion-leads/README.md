@@ -33,7 +33,7 @@ Gratis y en tu máquina:
 npx n8n
 ```
 
-Abre `http://localhost:5678`. Para producción necesitas n8n en un servidor con URL pública (n8n Cloud, un VPS de 5 €/mes, Railway o Render): un webhook en `localhost` no lo puede llamar tu web publicada.
+Abre `http://localhost:5678`. Para producción necesitas n8n en un servidor con URL pública (n8n Cloud, un VPS de 5 USD/mes, Railway o Render): un webhook en `localhost` no lo puede llamar tu web publicada.
 
 ### 2. Importar el flujo
 
@@ -47,7 +47,7 @@ Hoja nueva en Google Sheets, pestaña llamada **Leads**, y esta fila 1 exacta (l
 ID	Fecha	Nombre	Email	Telefono	Empresa	Servicio	Presupuesto	Mensaje	Score	Clasificacion	Estado	Accion	ResponderAntesDe	Motivos	Origen	Pagina	Cliente
 ```
 
-La columna `Cliente` está de más hoy —todos los leads son vuestros— pero evita rehacer el flujo y migrar la hoja el día que captéis leads para un cliente. Cuesta cero ponerla ahora.
+La columna `Cliente` está de más hoy —todos los leads son nuestros— pero evita rehacer el flujo y migrar la hoja el día que captemos leads para un cliente. Cuesta cero ponerla ahora.
 
 Copia el ID de la hoja desde su URL:
 
@@ -63,7 +63,7 @@ Dos minutos y sin coste:
 
 1. Escribe a **@BotFather** en Telegram → `/newbot` → te da un token.
 2. En n8n, credencial nueva de tipo *Telegram API* con ese token.
-3. Escríbele algo a tu bot desde el grupo o chat donde queráis los avisos.
+3. Escríbele algo a tu bot desde el grupo o chat donde quieras los avisos.
 4. Abre `https://api.telegram.org/bot<TU_TOKEN>/getUpdates` y copia el `chat.id`.
 5. Pégalo en el nodo **Avisar al equipo (Telegram)**.
 
@@ -87,11 +87,11 @@ Reglas explícitas, sin IA. Es gratis, instantáneo y siempre puedes explicar po
 
 | Señal | Puntos |
 | --- | --- |
-| Presupuesto > 7.000 € | +35 |
-| Presupuesto 3.000-7.000 € | +28 |
-| Presupuesto 1.000-3.000 € | +20 |
+| Presupuesto > 7.000 USD | +35 |
+| Presupuesto 3.000-7.000 USD | +28 |
+| Presupuesto 1.000-3.000 USD | +20 |
 | Presupuesto sin definir | +12 |
-| Presupuesto < 1.000 € | +6 |
+| Presupuesto < 1.000 USD | +6 |
 | Pide automatización o chatbot | +12 |
 | Pide tienda online | +10 |
 | Pide web o landing | +7 |
@@ -109,9 +109,9 @@ Reglas explícitas, sin IA. Es gratis, instantáneo y siempre puedes explicar po
 | **C · Frío** | 22-39 | Responder pidiendo concretar | 48 h |
 | **D · Revisar** | 0-21 | Mirar a mano antes de invertir tiempo | 72 h |
 
-Los umbrales están calibrados para que un negocio local con correo de Gmail y 1.000-3.000 € de presupuesto siga siendo un **lead B**: la mayoría de los pequeños negocios no tienen dominio propio y son clientes perfectamente buenos.
+Los umbrales están calibrados para que un negocio local con correo de Gmail y 1.000-3.000 USD de presupuesto siga siendo un **lead B**: la mayoría de los pequeños negocios no tienen dominio propio y son clientes perfectamente buenos.
 
-**Recalibra con datos reales.** Cuando tengáis 20 o 30 leads y sepáis cuáles cerraron, mirad la columna `Score` de los que compraron. Si los clientes reales sacaban 45 y vosotros llamabais solo a los de 65, estáis dejando dinero en la mesa.
+**Recalibra con datos reales.** Cuando tengas 20 o 30 leads y sepas cuáles cerraron, mira la columna `Score` de los que compraron. Si los clientes reales sacaban 45 y solo llamabas a los de 65, estás dejando dinero en la mesa.
 
 ## Filtro de bots
 
@@ -129,13 +129,13 @@ El nodo **Avisar al equipo (WhatsApp)** viene desactivado porque la API de Whats
 
 Cuando Meta apruebe el número: credencial *WhatsApp Business Cloud* en n8n, rellenar `phoneNumberId` y el número de destino, y activar el nodo con clic derecho → *Activate*. Ya usa `notifyPlain`, que es el mismo mensaje sin etiquetas HTML.
 
-Para vosotros esto es doblemente útil: es vuestra automatización funcionando sobre vuestro propio negocio. Es la demo que enseñáis en las llamadas de venta.
+Para nosotros esto es doblemente útil: es nuestra automatización funcionando sobre nuestro propio negocio. Es la demo que enseñamos en las llamadas de venta.
 
 ## Detalles de diseño
 
 **La autorespuesta es la misma para todos.** No cambia según la puntuación. Un lead con nota baja no es un mal cliente, solo uno que dio menos datos; tratarlo peor por eso se nota y sale caro. Lo que cambia según la nota es la prioridad interna, no el trato.
 
-**Sin IA en la calificación.** Un modelo costaría dinero por cada lead, añadiría latencia y daría resultados que no se pueden auditar. Con estas reglas sabéis exactamente por qué cada lead sacó su nota. Si más adelante queréis IA, el sitio natural es un nodo extra que resuma el mensaje y proponga un enfoque de venta — no que sustituya la puntuación.
+**Sin IA en la calificación.** Un modelo costaría dinero por cada lead, añadiría latencia y daría resultados que no se pueden auditar. Con estas reglas sabes exactamente por qué cada lead sacó su nota. Si más adelante quieres IA, el sitio natural es un nodo extra que resuma el mensaje y proponga un enfoque de venta — no que sustituya la puntuación.
 
 **Columna `Estado`.** La hoja escribe `Nuevo` en cada fila. Se cambia desde el [panel de leads](../../panel/README.md) o a mano en la hoja. Eso es un CRM suficiente para los primeros 100 clientes, y es gratis.
 

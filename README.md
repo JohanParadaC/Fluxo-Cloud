@@ -84,11 +84,11 @@ Las dos se activan solas al rellenar su variable en `.env`; vacías, el sitio fu
 
 **Agenda** (`VITE_CAL_LINK`): con un enlace de Cal.com, "Agendar diagnóstico" abre el calendario en un modal y la reunión queda reservada sin intercambiar mensajes. Se usa un `iframe` en lugar del script de incrustación oficial para no cargar JavaScript de terceros en todas las visitas: solo se descarga al pulsar. El modal lleva un enlace de salida por si el calendario no carga dentro del marco.
 
-**Analítica** (`VITE_ANALYTICS_*`): admite Umami y Plausible, los dos sin cookies y sin banner de consentimiento en la UE. Como las rutas van por hash, las vistas se registran a mano en cada cambio; el seguimiento automático contaría una sola página para todo el sitio.
+**Analítica** (`VITE_ANALYTICS_*`): admite Umami y Plausible, los dos sin cookies y sin banner de consentimiento. Como las rutas van por hash, las vistas se registran a mano en cada cambio; el seguimiento automático contaría una sola página para todo el sitio.
 
 Los eventos de conversión están centralizados en [`src/lib/analytics.js`](src/lib/analytics.js): clic en WhatsApp, apertura de la agenda, envío del formulario, correo y teléfono. Sin proveedor configurado, las llamadas no hacen nada.
 
-Lo más razonable para vosotros es **Umami autoalojado en el VPS**: gratis y los datos de los visitantes no salen de vuestra máquina.
+Lo más razonable es **Umami autoalojado en el VPS**: gratis y los datos de los visitantes no salen de nuestra máquina.
 
 ## Animaciones y peso
 
@@ -111,7 +111,7 @@ Todo vive en [`src/data/site.js`](src/data/site.js): nombre, email, teléfono, W
 El número de WhatsApp va **solo con dígitos y prefijo de país** (formato de `wa.me`):
 
 ```js
-whatsapp: '34600123456',
+whatsapp: '573001234567',
 ```
 
 ### Colores y tipografía

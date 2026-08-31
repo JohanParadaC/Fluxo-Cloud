@@ -2,12 +2,12 @@
  * Analítica, sin atarse a un proveedor.
  *
  * Soporta Umami y Plausible: los dos son cookieless, no piden banner de
- * consentimiento en la UE y pesan una fracción de lo que pesa GA4.
+ * consentimiento y pesan una fracción de lo que pesa GA4.
  * Se configura por variables de entorno; si no hay ninguna, no se carga nada
  * y las llamadas a `track` no hacen ni ruido.
  *
- * Recomendación: Umami autoalojado en vuestro VPS. Gratis para siempre y los
- * datos de vuestros visitantes no salen de vuestra máquina.
+ * Recomendación: Umami autoalojado en un VPS propio. Gratis para siempre y
+ * los datos de los visitantes no salen de nuestra máquina.
  */
 
 const PROVEEDOR = (import.meta.env.VITE_ANALYTICS_PROVIDER ?? '').toLowerCase()

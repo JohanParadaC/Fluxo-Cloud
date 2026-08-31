@@ -51,7 +51,7 @@ Al arrancar, el panel pedirá la clave. Se valida contra n8n y se guarda en el n
 
 ## Seguridad: léelo antes de dar acceso a nadie
 
-La clave compartida **sirve para vosotros tres y para nadie más**.
+La clave compartida **sirve para las tres personas del equipo y para nadie más**.
 
 Quien valida de verdad es n8n; la pantalla de entrada solo evita mostrar la interfaz. Pero la clave es la misma para todos, viaja al navegador y no distingue quién la usa. Eso significa que:
 
@@ -65,9 +65,9 @@ El campo `cliente` ya viaja en los datos desde el primer día precisamente para 
 
 ## Desplegar
 
-`npm --prefix panel run build` genera `panel/dist/`, que son archivos estáticos. Sirven en cualquier sitio: Vercel, Netlify, Cloudflare Pages o vuestro VPS con Caddy.
+`npm --prefix panel run build` genera `panel/dist/`, que son archivos estáticos. Sirven en cualquier sitio: Vercel, Netlify, Cloudflare Pages o un VPS propio con Caddy.
 
-Si lo servís en el mismo dominio que n8n a través de un proxy inverso, desaparece el problema de CORS por completo. Ejemplo con Caddy:
+Si se sirve en el mismo dominio que n8n a través de un proxy inverso, desaparece el problema de CORS por completo. Ejemplo con Caddy:
 
 ```
 panel.tudominio.com {

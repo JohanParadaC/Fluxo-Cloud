@@ -46,7 +46,7 @@ export const formatearFecha = (iso) => {
   if (!iso) return '—'
   const fecha = new Date(iso)
   if (Number.isNaN(fecha.getTime())) return '—'
-  return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
+  return fecha.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: '2-digit' })
 }
 
 export const tiempoRelativo = (iso) => {
