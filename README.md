@@ -169,3 +169,8 @@ Antes de publicar conviene actualizar la URL canónica, las de Open Graph y aña
 El resultado de `npm run build` es estático. Sirve `dist/` en Vercel, Netlify, Cloudflare Pages, GitHub Pages o cualquier hosting.
 
 Para Vercel o Netlify basta con el comando `npm run build` y el directorio de salida `dist`.
+
+`vercel.json` fija dos cosas. Su esquema no admite comentarios, así que el porqué vive aquí:
+
+- **Caché de `/assets/*`**: Vite pone un hash de contenido en cada nombre de archivo, así que un cambio genera un nombre nuevo. Se pueden cachear para siempre (`immutable`) sin riesgo de servir una versión vieja. Sin esto, cada visita revalida el bundle entero.
+- **Cabeceras de seguridad** en todas las rutas: `nosniff`, `SAMEORIGIN`, `Referrer-Policy` y `Permissions-Policy`. No cuestan rendimiento y evitan que la web se incruste en un iframe ajeno o que el navegador adivine tipos MIME.

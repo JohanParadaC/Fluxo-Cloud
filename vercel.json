@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "headers": [
     {
-      "comment": "Vite pone un hash de contenido en el nombre de cada archivo de /assets, así que un cambio genera un nombre nuevo. Se pueden cachear para siempre sin riesgo de servir una versión vieja. Sin esto, cada visita revalida el bundle entero.",
       "source": "/assets/(.*)",
       "headers": [
         {
@@ -12,7 +11,6 @@
       ]
     },
     {
-      "comment": "Cabeceras de seguridad mínimas. No cuestan rendimiento y evitan que la web pueda incrustarse en un iframe ajeno o que el navegador adivine tipos MIME.",
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
