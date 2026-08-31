@@ -3,7 +3,21 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Landing page de agencia digital especializada en desarrollo web y automatizacion con IA",
+  "description": "Landing page de agencia digital en React 19 + Vite, con captación y scoring de leads en n8n y panel interno.",
+  "keywords": [
+    "react",
+    "vite",
+    "tailwindcss",
+    "n8n",
+    "landing-page",
+    "automation",
+    "lead-generation"
+  ],
+  "homepage": "https://www.fluxocloudlabs.net/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohanParadaC/Solutions-Saas.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
