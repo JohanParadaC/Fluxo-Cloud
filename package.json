@@ -18,7 +18,7 @@
   "author": "Johan David Parada Camargo",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JohanParadaC/Solutions-Saas.git"
+    "url": "git+https://github.com/JohanParadaC/Fluxo-Cloud.git"
   },
   "scripts": {
     "dev": "vite",
