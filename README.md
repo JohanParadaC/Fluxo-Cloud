@@ -41,6 +41,48 @@ Tres dependencias en total, y cada vista se descarga aparte cuando se pide.
 
 Sin imágenes externas: todas las ilustraciones (panel del hero, mockups del portafolio, diagrama de flujo) están hechas con CSS y SVG.
 
+## Decisiones técnicas
+
+### Tres dependencias, y ninguna para animar
+
+El sitio depende de React, ReactDOM y lucide-react. No hay librería de animación: las entradas al hacer scroll son CSS disparado por un `IntersectionObserver` de cuarenta líneas ([`useInView`](src/hooks/useInView.js)), y todo lo demás son transiciones y `@keyframes`. Antes estaba Framer Motion y se quitó.
+
+El detonante no fue una auditoría de peso, sino que la página iba lenta y el consumo de memoria era alto. Quitarla arregló las dos cosas a la vez: el JavaScript inicial bajó de 133 a 81 KB comprimidos y las dependencias de cuatro a tres.
+
+El precio es que solo se animan `opacity` y `transform`, las dos propiedades que el navegador resuelve en el compositor sin recalcular layout. Eso descarta secuencias encadenadas, animaciones de layout y gestos; cualquiera de esas cosas habría que escribirla a mano o volver a meter la librería. A cambio, apagar todo el movimiento para `prefers-reduced-motion` es una regla de CSS ([`index.css:429`](src/index.css#L429)) en lugar de condicionales repartidos por los componentes. El mismo criterio rige el lienzo de la red neuronal: sin `shadowBlur`, 34 nodos como techo porque el cálculo de enlaces es cuadrático, 30 fps en vez de 60, y parado fuera del viewport y con la pestaña de fondo. Esos límites salieron de medir en un dispositivo real, no de estimar.
+
+### Enrutado por hash en lugar de rutas reales
+
+Las vistas viven en `#inicio`, `#automatizacion`, `#demos`, `#faq` y `#contacto`, resueltas por [`useHashRoute`](src/hooks/useHashRoute.js) en treinta líneas y sin dependencias. La alternativa era React Router con rutas reales.
+
+Con hash, los enlaces profundos, el botón atrás y el refresco de página funcionan sin configurar una sola redirección en el hosting. El `dist/` se sirve igual en Vercel, Netlify, Cloudflare Pages o GitHub Pages, y GitHub Pages ni siquiera admite las reescrituras que exigirían las rutas reales.
+
+Se paga en dos sitios. Las URLs llevan `#`, que se ve peor y no reparte autoridad de buscador entre las vistas. Y el seguimiento automático de cualquier herramienta de analítica cuenta una sola página para todo el sitio, porque el hash no viaja al servidor. Eso obligó a la decisión siguiente.
+
+### Analítica sin cookies, con las vistas contadas a mano
+
+[`analytics.js`](src/lib/analytics.js) admite Umami o Plausible, elegidos por variable de entorno. Sin proveedor configurado no se descarga ningún script y las llamadas a `track` no hacen nada. La alternativa era Google Analytics 4.
+
+Ninguno de los dos usa cookies, así que no hace falta banner de consentimiento: una pieza de interfaz que tapa el contenido justo en la primera impresión y que hay que mantener. Y pesan una fracción de lo que pesa GA4, que en un sitio cuyo argumento son 81 KB habría sido incoherente.
+
+Se renuncia a los informes de audiencia, demografía y atribución multicanal que GA4 da hechos. Y por el enrutado por hash, el registro automático es inservible: el script arranca con `data-auto-track` en `false` y cada cambio de vista llama a `registrarVista` desde `App.jsx`. Es deuda asumida y tiene un filo: si alguien añade una vista y olvida esa llamada, esa vista deja de contarse y nada falla de forma visible.
+
+### n8n como motor de los flujos, y reglas explícitas en vez de IA
+
+El formulario entra en un flujo de n8n que valida, puntúa, clasifica en A/B/C/D, escribe en Google Sheets, avisa al equipo por Telegram y responde al cliente. Se descartó una función serverless en Vercel, que salía gratis y sin infraestructura nueva, y se descartó un modelo de lenguaje para calificar.
+
+La razón de n8n no es técnica: la agencia vende automatización con n8n, así que el flujo que capta sus propios leads es la demo que se enseña en la llamada de venta. Una función serverless habría hecho el mismo trabajo sin nada que enseñar. El coste es que hay que mantener una instancia de n8n con URL pública, y si se cae, el formulario deja de registrar: por eso [`ContactForm`](src/components/ContactForm.jsx) recurre a WhatsApp cuando no hay endpoint configurado, aunque entonces la solicitud no quede guardada en ningún sitio.
+
+La puntuación por reglas es gratis, instantánea y auditable: siempre se puede decir por qué un lead sacó su nota, y los pesos están declarados al principio del nodo para ajustarlos con datos reales. Un modelo cobraría por lead, añadiría latencia y devolvería un número que nadie puede justificar. A cambio, las reglas no leen matices — un mensaje mal escrito de un cliente excelente puntuará bajo — y hay que recalibrarlas a mano cuando haya cierres reales que mirar.
+
+### El panel esquiva la comprobación previa de CORS
+
+El panel lee con `GET` y la clave en la URL, y escribe con `POST` de `text/plain` llevando un JSON dentro que n8n parsea en el primer nodo ([`api.js`](panel/src/lib/api.js)). Lo evidente habría sido una cabecera `Authorization` y `Content-Type: application/json`.
+
+Así construidas, las dos peticiones son “peticiones simples” y el navegador no lanza `OPTIONS`. Cualquier cabecera propia o `application/json` obligaría a que n8n respondiera bien al preflight, que es la causa más común de que este tipo de paneles funcione en local y falle al desplegarlo.
+
+El precio se paga en seguridad y está asumido por escrito en [panel/README.md](panel/README.md): la clave viaja en la URL, así que aparece en los registros del servidor y en el historial del navegador; es la misma para todo el equipo, no distingue quién hizo cada cambio, y revocarle el acceso a una persona obliga a cambiarla para todas. Quien valida de verdad es n8n — la pantalla de entrada solo evita mostrar la interfaz — y el día que entre un cliente que deba ver solo lo suyo, hay que pasar a autenticación por usuario.
+
 ## Puesta en marcha
 
 ```bash
@@ -116,7 +158,7 @@ Lo más razonable es **Umami autoalojado en el VPS**: gratis y los datos de los 
 
 ## Animaciones
 
-No hay librería de animación. Las entradas al hacer scroll son CSS disparado por un `IntersectionObserver` ([`useInView`](src/hooks/useInView.js) + `[data-reveal]` en `index.css`), y todo lo demás son transiciones y `@keyframes`. Solo se animan `opacity` y `transform`, que el navegador resuelve en el compositor.
+El mecanismo, explicado en [Decisiones técnicas](#tres-dependencias-y-ninguna-para-animar): `[data-reveal]` en `index.css` define la animación y [`useInView`](src/hooks/useInView.js) decide cuándo dispararla.
 
 Cada vista se carga cuando se pide, y se precarga al pasar el ratón por su enlace del menú, así que al pulsar ya suele estar descargada.
 
