@@ -1,14 +1,35 @@
 node_modules
+
+# Artefactos de build
 dist
 dist-ssr
+build/
+out/
+coverage/
+.cache/
+*.tsbuildinfo
 *.local
+
+# Entorno: se versionan solo los .env.example
 .env
 .env.*
 !.env.example
 
+# Despliegue: IDs de proyecto y organizacion de Vercel
+.vercel
+
+# Herramientas de IA
+.claude/
+.cursor/
+.opencode/
+.windsurf/
+.aider*
+
+# Sistema operativo
 .DS_Store
 Thumbs.db
 
+# Editores
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -18,6 +39,5 @@ Thumbs.db
 *.sln
 *.sw?
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Logs
+*.log
