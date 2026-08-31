@@ -1,7 +1,31 @@
-# Fluxo Cloud — Landing page de agencia digital
+# Fluxo Cloud
 
-Sitio one-page para una agencia especializada en **diseño web, soluciones digitales y automatización con IA**.
-Estética futurista sobre negro profundo, con acentos neón (cian, azul eléctrico, verde), glassmorphism y animaciones de scroll.
+Landing page one-page de una agencia de diseño web y automatización con IA, con el flujo de n8n que capta y puntúa los leads y el panel interno para trabajarlos. React 19 y Vite, tres dependencias, 81 KB de JavaScript inicial.
+
+![Fluxo Cloud](docs/screenshot.png)
+
+**[Ver la demo en vivo →](https://www.fluxocloudlabs.net/)**
+
+![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=061E26&labelColor=04060c)
+![Vite 7](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=fff&labelColor=04060c)
+![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=fff&labelColor=04060c)
+![JS inicial 81 KB gzip](https://img.shields.io/badge/JS_inicial-81_KB_gzip-22C55E?labelColor=04060c)
+
+## El problema
+
+Una agencia pequeña recibe pocos leads y no puede permitirse perder ninguno. Lo habitual es una web que tarda en cargar en un móvil con mala cobertura y un formulario que dispara un correo suelto, que alguien acaba leyendo dos días tarde.
+
+Aquí la web carga con 81 KB de JavaScript y el formulario entra en un flujo de n8n que valida, puntúa y clasifica cada solicitud en menos de dos segundos, avisa al equipo y la deja en un panel interno con su prioridad y su plazo. Pensado para negocios que trabajan los leads a mano y necesitan saber a cuál llamar primero.
+
+## Resultado
+
+De la primera versión a la actual, tras partir el sitio por vistas y quitar la librería de animación:
+
+| | Antes | Ahora |
+| --- | --- | --- |
+| JavaScript inicial | 133 KB gzip | **81 KB gzip** |
+| Dependencias | 4 | 3 |
+| Vistas | todo en un archivo | 4 chunks aparte |
 
 ## Stack
 
@@ -13,7 +37,7 @@ Estética futurista sobre negro profundo, con acentos neón (cian, azul eléctri
 | Animaciones    | CSS + IntersectionObserver (sin librería) |
 | Iconos         | lucide-react                     |
 
-Tres dependencias en total. El JavaScript inicial son **81 KB comprimidos**, y cada vista se descarga aparte cuando se pide.
+Tres dependencias en total, y cada vista se descarga aparte cuando se pide.
 
 Sin imágenes externas: todas las ilustraciones (panel del hero, mockups del portafolio, diagrama de flujo) están hechas con CSS y SVG.
 
@@ -90,17 +114,11 @@ Los eventos de conversión están centralizados en [`src/lib/analytics.js`](src/
 
 Lo más razonable es **Umami autoalojado en el VPS**: gratis y los datos de los visitantes no salen de nuestra máquina.
 
-## Animaciones y peso
+## Animaciones
 
 No hay librería de animación. Las entradas al hacer scroll son CSS disparado por un `IntersectionObserver` ([`useInView`](src/hooks/useInView.js) + `[data-reveal]` en `index.css`), y todo lo demás son transiciones y `@keyframes`. Solo se animan `opacity` y `transform`, que el navegador resuelve en el compositor.
 
 Cada vista se carga cuando se pide, y se precarga al pasar el ratón por su enlace del menú, así que al pulsar ya suele estar descargada.
-
-| | Antes | Ahora |
-| --- | --- | --- |
-| JavaScript inicial | 133 KB gzip | **81 KB gzip** |
-| Dependencias | 4 | 3 |
-| Vistas | todo en un archivo | 4 chunks aparte |
 
 ## Personalización
 
@@ -115,6 +133,8 @@ whatsapp: '573001234567',
 ```
 
 ### Colores y tipografía
+
+Estética futurista sobre negro profundo, con acentos neón (cian, azul eléctrico, verde), glassmorphism y animaciones de scroll. Todo sale de tokens.
 
 En el bloque `@theme` de [`src/index.css`](src/index.css). Cambiar `--color-neon-cyan`, `--color-neon-green`, etc. repinta el sitio completo, incluidos degradados y resplandores.
 
