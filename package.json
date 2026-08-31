@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Landing page de agencia digital en React 19 + Vite, con captación y scoring de leads en n8n y panel interno.",
+  "description": "Digital agency landing in React 19 + Vite, with n8n lead capture, scoring and an internal dashboard.",
   "keywords": [
     "react",
     "vite",
@@ -14,6 +14,8 @@
     "lead-generation"
   ],
   "homepage": "https://www.fluxocloudlabs.net/",
+  "license": "MIT",
+  "author": "Johan David Parada Camargo",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JohanParadaC/Solutions-Saas.git"

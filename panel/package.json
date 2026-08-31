@@ -4,6 +4,21 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Panel interno de leads: lee del flujo de n8n y permite mover el estado de cada solicitud",
+  "keywords": [
+    "react",
+    "vite",
+    "tailwindcss",
+    "n8n",
+    "dashboard",
+    "crm"
+  ],
+  "license": "MIT",
+  "author": "Johan David Parada Camargo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohanParadaC/Solutions-Saas.git",
+    "directory": "panel"
+  },
   "scripts": {
     "dev": "vite --port 5174",
     "build": "vite build",
