@@ -6,7 +6,7 @@ Landing page one-page de una agencia de diseño web y automatización con IA, co
 
 **[Ver la demo en vivo →](https://www.fluxocloudlabs.net/)**
 
-![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=061E26&labelColor=04060c)
+![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=61DAFB&labelColor=04060c)
 ![Vite 7](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=fff&labelColor=04060c)
 ![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=fff&labelColor=04060c)
 ![JS inicial 81 KB gzip](https://img.shields.io/badge/JS_inicial-81_KB_gzip-22C55E?labelColor=04060c)
